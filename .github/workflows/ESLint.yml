@@ -34,5 +34,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Installs all global dependencies
         run: npm i -g eslint
+      - name: Installs dependencies
+        run: npm i
       - name: Lints the repository for any linting errors/warnings
         run: eslint src --ext .ts --fix
