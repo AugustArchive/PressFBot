@@ -20,7 +20,4 @@
  * SOFTWARE.
  */
 
-import type PressFBot from '../internals/PressFBot';
-
-/** Run function in `bot.ts` */
-export type RunCluster = (bot: PressFBot) => Promise<void> | void;
+export * from './ClusterManager';
