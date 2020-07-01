@@ -20,40 +20,15 @@
  * SOFTWARE.
  */
 
-const SYMBOL = Symbol('$commands');
+import type { CommandDefinition, CommandInfo } from '..';
+import type Context from './Context';
 
-/** Represents what the "command" is like */
-export interface EventDefinition {
-  run(...args: any[]): Promise<void>;
-  event: string;
-}
+export default class Command {
+  public info: CommandInfo;
+  public run: (ctx: Context) => Promise<void>;
 
-/**
- * Gets all of the definitions found in the target's constructor
- * @param target The target class
- */
-export function findListeners(target: any): EventDefinition[] {
-  if (target.constructor == null) return [];
-
-  const definitions = target.constructor[SYMBOL];
-  if (!Array.isArray(definitions)) return [];
-
-  return definitions;
-}
-
-/**
- * Adds an event listener
- * @param event The event to listen to
- */
-export function Event(event: string): MethodDecorator {
-  return (target: any, prop, descriptor: TypedPropertyDescriptor<any>) => {
-    if (target.prototype !== undefined) throw new SyntaxError(`Method "${target.name}#${String(prop)}" is not a valid function to be used as a command.`);
-
-    if (!target.constructor[SYMBOL]) target.constructor[SYMBOL] = [];
-
-    (target.constructor[SYMBOL] as EventDefinition[]).push({
-      event,
-      run: descriptor.value
-    });
-  };
+  constructor(definition: CommandDefinition) {
+    this.info = definition.info;
+    this.run = definition.run;
+  }
 }

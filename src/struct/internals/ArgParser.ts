@@ -20,40 +20,21 @@
  * SOFTWARE.
  */
 
-const SYMBOL = Symbol('$commands');
+export default class ArgumentParser {
+  private raw: string[];
+  constructor(args: string[]) {
+    this.raw = args;
+  }
 
-/** Represents what the "command" is like */
-export interface EventDefinition {
-  run(...args: any[]): Promise<void>;
-  event: string;
-}
+  get(index: number) { 
+    return this.raw[index] || null; 
+  }
 
-/**
- * Gets all of the definitions found in the target's constructor
- * @param target The target class
- */
-export function findListeners(target: any): EventDefinition[] {
-  if (target.constructor == null) return [];
+  has(index: number) {
+    return this.raw[index] !== undefined;
+  }
 
-  const definitions = target.constructor[SYMBOL];
-  if (!Array.isArray(definitions)) return [];
-
-  return definitions;
-}
-
-/**
- * Adds an event listener
- * @param event The event to listen to
- */
-export function Event(event: string): MethodDecorator {
-  return (target: any, prop, descriptor: TypedPropertyDescriptor<any>) => {
-    if (target.prototype !== undefined) throw new SyntaxError(`Method "${target.name}#${String(prop)}" is not a valid function to be used as a command.`);
-
-    if (!target.constructor[SYMBOL]) target.constructor[SYMBOL] = [];
-
-    (target.constructor[SYMBOL] as EventDefinition[]).push({
-      event,
-      run: descriptor.value
-    });
-  };
+  slice(start: number, end?: number) {
+    return new (this.constructor as typeof ArgumentParser)(this.raw.slice(start, end));
+  }
 }

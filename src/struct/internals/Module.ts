@@ -20,40 +20,40 @@
  * SOFTWARE.
  */
 
-const SYMBOL = Symbol('$commands');
+import { Collection } from '@augu/immutable';
+import type PressFBot from './PressFBot';
+import Command from './Command';
 
-/** Represents what the "command" is like */
-export interface EventDefinition {
-  run(...args: any[]): Promise<void>;
-  event: string;
+interface ModuleInfo {
+  description: string;
+  visible: boolean;
+  name: string;
 }
+export default class Module {
+  public description: string;
+  public commands: Collection<Command>;
+  public visible: boolean;
+  public name: string;
+  public bot!: PressFBot;
 
-/**
- * Gets all of the definitions found in the target's constructor
- * @param target The target class
- */
-export function findListeners(target: any): EventDefinition[] {
-  if (target.constructor == null) return [];
+  constructor(info: ModuleInfo) {
+    this.description = info.description;
+    this.commands = new Collection();
+    this.visible = info.visible;
+    this.name = info.name;
+  }
 
-  const definitions = target.constructor[SYMBOL];
-  if (!Array.isArray(definitions)) return [];
+  inject(bot: PressFBot) {
+    this.bot = bot;
+  }
 
-  return definitions;
-}
+  getCommand(name: string) {
+    return this.commands.filter(cmd =>
+      cmd.info.name === name || cmd.info.aliases.includes(name)  
+    )[0];
+  }
 
-/**
- * Adds an event listener
- * @param event The event to listen to
- */
-export function Event(event: string): MethodDecorator {
-  return (target: any, prop, descriptor: TypedPropertyDescriptor<any>) => {
-    if (target.prototype !== undefined) throw new SyntaxError(`Method "${target.name}#${String(prop)}" is not a valid function to be used as a command.`);
-
-    if (!target.constructor[SYMBOL]) target.constructor[SYMBOL] = [];
-
-    (target.constructor[SYMBOL] as EventDefinition[]).push({
-      event,
-      run: descriptor.value
-    });
-  };
+  addCommands(commands: Command[]) {
+    for (const command of commands) this.commands.set(command.info.name, command);
+  }
 }

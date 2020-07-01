@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+import type { EmbedOptions } from 'eris';
 import { existsSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
@@ -53,7 +54,7 @@ export function getCommitHash() {
  * @credit [Kurasuta](https://github.com/DevYukine/Kurasuta/blob/master/src/Util/Util.ts)
  */
 export function chunkArray<T>(entries: T[], size: number) {
-  const result: (T[])[] = [];
+  const result: T[][] = [];
   const amount = Math.floor(entries.length / size);
   const mod = entries.length % size;
 
@@ -97,4 +98,35 @@ export function humanize(ms: number) {
   if (sec > 0) humanized += `${sec} seconds`;
 
   return humanized;
+}
+
+export function unembedify(embed: EmbedOptions) {
+  let text = '';
+
+  function getTime(now: number) {
+    const date = new Date(now);
+    const escape = (value) => `0${value}`.slice(-2);
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+    return `${date.getMonth()}/${date.getDate()}/${date.getFullYear()} at ${escape(date.getHours())}:${escape(date.getMinutes())}:${escape(date.getSeconds())}${ampm}`;
+  }
+
+  if (embed.title) text += `__**${embed.title}**__`;
+  if (embed.description) text += `\n${embed.description.includes('> ') ? embed.description : `> **${embed.description}**`}`;
+  if (embed.fields) {
+    text += '\n';
+    for (const field of embed.fields) text += `\n- ${field.name}: ${field.value}`;
+  }
+  if (embed.footer) {
+    let field = `\n\n**${embed.footer.text}`;
+
+    if (embed.timestamp) {
+      const time = embed.timestamp instanceof Date ? getTime(embed.timestamp.getTime()) : embed.timestamp;
+      field += `at ${time}`;
+    }
+
+    text += `${field}**`;
+  }
+
+  return text;
 }
