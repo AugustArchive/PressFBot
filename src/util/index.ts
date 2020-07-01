@@ -26,17 +26,6 @@ import { execSync } from 'child_process';
 import { join } from 'path';
 
 /**
- * Shows an ad at a specified percentage
- * @param show If we should show it or not
- * @returns The advertisement itself or `undefined` if `show` = false & random is not over 0.9
- */
-export function showAd(show: boolean): string | undefined {
-  const random = Math.random();
-  if (show && random >= 0.9) return 'Consider supporting PressFBot using the `f vote` command!';
-  else return undefined;
-}
-
-/**
  * Gets the commit hash from Git
  * @returns A string if the root directory is a Git repository
  * or `null` if no `.git` folder was found

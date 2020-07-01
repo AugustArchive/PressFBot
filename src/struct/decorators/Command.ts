@@ -28,6 +28,7 @@ const SYMBOL = Symbol('$commands');
 export interface CommandInfo {
   description: string;
   ownerOnly: boolean;
+  cooldown: number;
   aliases: string[];
   usage: string;
   name: string;

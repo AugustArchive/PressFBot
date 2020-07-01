@@ -20,46 +20,41 @@
  * SOFTWARE.
  */
 
-import { Collection } from '@augu/immutable';
-import type PressFBot from './PressFBot';
-import Command from './Command';
+import { HttpClient, middleware } from '@augu/orchid';
+import { Logger, createLogger } from '@augu/logging';
+import type PressFBot from '../internals/PressFBot';
 
-interface ModuleInfo {
-  description: string;
-  visible: boolean;
-  name: string;
-}
-export class Module {
-  public description: string;
-  public commands: Collection<Command>;
-  public visible: boolean;
-  public name: string;
-  public bot!: PressFBot;
+export default class BotlistService {
+  private interval?: NodeJS.Timer;
+  private logger: Logger = createLogger('BotlistService');
+  private http: HttpClient = new HttpClient();
 
-  constructor(info: ModuleInfo) {
-    this.description = info.description;
-    this.commands = new Collection();
-    this.visible = info.visible;
-    this.name = info.name;
+  constructor(private bot: PressFBot) {
+    this.interval = undefined;
+
+    this.http.use(middleware.logging({ binding: this.logger.orchid }));
   }
 
-  inject(bot: PressFBot) {
-    this.bot = bot;
+  async start() {
+    if (this.interval) {
+      this.logger.warn('Interval has already started.');
+      return;
+    }
+
+    await this._post();
+    this.interval = setInterval(async() => {
+      this.logger.info('Now posting stats!');
+      await this._post();
+    }, 900000);
   }
 
-  getCommand(name: string) {
-    return this.commands.filter(cmd =>
-      cmd.info.name === name || cmd.info.aliases.includes(name)  
-    )[0];
-  }
+  stop() {
+    if (!this.interval) {
+      this.logger.warn('Interval is already destroyed.');
+      return;
+    }
 
-  hasCommand(name: string) {
-    return this.commands.filter(cmd =>
-      cmd.info.name === name || cmd.info.aliases.includes(name)  
-    ).length > 0;
-  }
-
-  addCommands(commands: Command[]) {
-    for (const command of commands) this.commands.set(command.info.name, command);
+    clearInterval(this.interval);
+    this.logger.info('on and on...'); // put it on me~
   }
 }
