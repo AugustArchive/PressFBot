@@ -67,7 +67,7 @@ export default class ListenerManager extends Collection<Listener> {
 
     for (const file of files) {
       const listen = require(join(this.path, file));
-      const listener: Listener = listen.default ? new listen.default(this.bot) : new listen(this.bot);
+      const listener: Listener = listen.default ? new listen.default() : new listen();
 
       listener.inject(this.bot);
       const definitions = findListeners(listener);

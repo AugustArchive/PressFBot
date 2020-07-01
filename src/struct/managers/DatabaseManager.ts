@@ -35,7 +35,7 @@ export default class DatabaseManager {
     this.logger = createLogger('Database [PostgreSQL]', { file: './logs/database.log' });
     this.pool = new pg.Pool({ 
       password: bot.config.database.password,
-      user: bot.config.database.user,
+      user: bot.config.database.username,
       host: bot.config.database.host,
       port: bot.config.database.port
     });

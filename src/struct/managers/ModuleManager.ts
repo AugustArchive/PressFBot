@@ -20,4 +20,51 @@
  * SOFTWARE.
  */
 
- 
+import { createLogger, Logger } from '@augu/logging';
+import { promises as fs } from 'fs';
+import { findCommands } from '../decorators';
+import { Collection } from '@augu/immutable';
+import type { Module } from '../internals/Module';
+import type PressFBot from '../internals/PressFBot';
+import { getPath } from '../../util';
+import { join } from 'path';
+
+export default class ModuleManager extends Collection<Module> {
+  private logger: Logger = createLogger('ModuleManager');
+  private bot: PressFBot;
+  public path: string;
+
+  constructor(bot: PressFBot) {
+    super();
+
+    this.path = getPath('modules');
+    this.bot = bot;
+  } 
+
+  async start() {
+    this.logger.info('Now processing modules...');
+
+    const files = await fs.readdir(this.path);
+    if (!files.length) {
+      this.logger.warn(`No files were found in ${this.path}, continuing...`);
+      return;
+    }
+
+    for (const file of files) {
+      const mod = require(join(this.path, file));
+      const module: Module = mod.default ? new mod.default() : new mod();
+
+      module.inject(this.bot);
+      const definitions = findCommands(module);
+      if (!definitions.length) {
+        this.logger.warn('Unable to fetch commands, continuing...');
+        continue;
+      }
+
+      module.addCommands(definitions);
+      this.set(module.name, module);
+
+      this.logger.info(`Added module "${module.name}" to the registry`);
+    }
+  }
+}

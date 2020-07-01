@@ -108,7 +108,7 @@ export default class ClusterIPC {
 
           data.push({
             latency: `${shard.latency}ms`,
-            guilds,
+            guilds: guilds.length,
             status,
             users,
             id: shard.id

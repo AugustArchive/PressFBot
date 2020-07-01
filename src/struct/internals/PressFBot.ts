@@ -20,6 +20,15 @@
  * SOFTWARE.
  */
 
+import { Logger, createLogger } from '@augu/logging';
+import CommandStatsManager from '../managers/CommandStatisticsManager';
+import { ClusterManager } from '../clustering';
+import { EmbedBuilder } from './EmbedBuilder';
+import DatabaseManager from '../managers/DatabaseManager';
+import ListenerManager from '../managers/ListenerManager';
+import ModuleManager from '../managers/ModuleManager';
+import { Client } from 'eris';
+
 export interface Config {
   database: DatabaseConfig;
   token: string;
@@ -33,5 +42,49 @@ interface DatabaseConfig {
 }
 
 export default class PressFBot {
-  
+  public statistics: CommandStatsManager;
+  public database: DatabaseManager;
+  public modules: ModuleManager;
+  public cluster: ClusterManager;
+  public events: ListenerManager;
+  public logger: Logger;
+  public config: Config;
+  public client: Client;
+
+  constructor(config: Config) {
+    this.statistics = new CommandStatsManager();
+    this.database = new DatabaseManager(this);
+    this.modules = new ModuleManager(this);
+    this.cluster = new ClusterManager(this);
+    this.logger = createLogger('PressFBot', { file: './logs/bot.log' });
+    this.events = new ListenerManager(this);
+    this.config = config;
+    this.client = new Client(config.token, {
+      maxShards: 'auto',
+      intents: ['guilds', 'guildMessages']
+    });
+  }
+
+  async start() {
+    this.logger.info('Starting up instance...');
+    await new Promise(e => setTimeout(e, 2000));
+
+    this.logger.info('Loading up modules...');
+    await this.modules.start();
+
+    this.logger.info('Loaded modules! Now loading listeners...');
+    await this.events.start();
+
+    this.logger.info('Loaded listeners! Now booting up clusters...');
+    await this.cluster.spawn();
+
+    this.logger.info('Loaded clusters! Now connecting to Discord!');
+    await this.client.connect()
+      .then(() => this.logger.info('Now authorizing with Discord using WebSockets...'));
+  }
+
+  getEmbed() {
+    return new EmbedBuilder()
+      .setColor(0x636366);
+  }
 }

@@ -92,7 +92,7 @@ export default class MasterIPC {
     this.logger.warn('Requested to restart all clusters');
 
     try {
-      await this.bot.restartAll();
+      await this.bot.cluster.restartAll();
       m.reply({ success: true });
     } catch (ex) {
       m.reply({
@@ -109,7 +109,7 @@ export default class MasterIPC {
     const data = message.data as IPC.Request<RestartArgs>;
 
     try {
-      await this.bot.restart(data.d!.cluster);
+      await this.bot.cluster.restart(data.d!.cluster);
       message.reply({ success: true });
     } catch (ex) {
       message.reply({
@@ -124,7 +124,7 @@ export default class MasterIPC {
 
   private _ready(m: NodeMessage) {
     const data = m.data as IPC.Request<ReadyArgs>;
-    const cluster = this.bot.clusters.get(data.d!.cluster);
+    const cluster = this.bot.cluster.get(data.d!.cluster);
 
     if (cluster === null) {
       m.reply({
@@ -135,7 +135,7 @@ export default class MasterIPC {
         }
       });
     } else {
-      cluster.emit('ready');
+      cluster!.emit('ready');
     }
   }
 

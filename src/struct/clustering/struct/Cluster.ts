@@ -109,7 +109,7 @@ export default class Cluster extends EventEmitter {
   }
 
   async spawn() {
-    this.logger.info(`Initialising cluster! (Serving ${this.shards.join(', ')}/${this.bot.cluster.getTotal()})`);
+    this.logger.info(`Initialising cluster! (Serving ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
     this.worker = fork({
       CLUSTER_SHARDS: this.shards.join(', '),
       CLUSTER_ID: this.id
@@ -131,7 +131,7 @@ export default class Cluster extends EventEmitter {
   private _readyUp(shardCount: number) {
     return new Promise<void>((resolve, reject) => {
       this.once('ready', resolve);
-      setTimeout(() => reject(new Error(`Cluster #${this.id} took too long to get ready.`)), (this.bot.clusters.getTimeout() * shardCount));
+      setTimeout(() => reject(new Error(`Cluster #${this.id} took too long to get ready.`)), (30000 * shardCount));
     });
   }
 }
