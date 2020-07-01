@@ -75,7 +75,7 @@ function clone(obj: Record<string, unknown>) {
   return Object.assign(obj, object);
 }
 
-export default class EmbedBuilder {
+export class EmbedBuilder {
   public title?: string;
   public description?: string;
   public author?: EmbedAuthor;

@@ -130,3 +130,6 @@ export function unembedify(embed: EmbedOptions) {
 
   return text;
 }
+
+export const sep = process.platform === 'win32' ? '\\' : '/';
+export const getPath = (...paths: string[]) => `${process.cwd()}${sep}${paths.join(sep)}`;

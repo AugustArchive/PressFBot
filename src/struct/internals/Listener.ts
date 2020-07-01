@@ -24,7 +24,7 @@ import type { EventDefinition } from '..';
 import type PressFBot from './PressFBot';
 import { Collection } from '@augu/immutable';
 
-export default class Listener {
+export class Listener {
   public events: Collection<EventDefinition>;
   public name: string;
   public bot!: PressFBot;

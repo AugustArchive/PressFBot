@@ -29,7 +29,7 @@ interface ModuleInfo {
   visible: boolean;
   name: string;
 }
-export default class Module {
+export class Module {
   public description: string;
   public commands: Collection<Command>;
   public visible: boolean;
