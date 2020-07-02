@@ -43,10 +43,8 @@ bot
 
 process
   .on('SIGINT', () => {
-    logger.warn('Received "CTRL+C" action');
     bot.dispose();
-
-    process.exit(0);
+    process.exit(1);
   })
   .on('uncaughtException', (reason) => logger.error('Received an uncaught exception:', reason || new Error('Unknown reason')))
   .on('unhandledRejection', (reason) => logger.error('Received an unhandled promise:', reason || new Error('Unknown reason')));

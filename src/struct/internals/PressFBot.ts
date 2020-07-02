@@ -62,6 +62,9 @@ export default class PressFBot {
   public client: Client;
 
   constructor(config: Config) {
+    // this is at top to prevent
+    // TypeError: Cannot read property 'x' of undefined
+    this.config = config;
     this.commandService = new CommandService(this);
     this.statistics = new CommandStatsManager();
     this.database = new DatabaseManager(this);
@@ -70,27 +73,27 @@ export default class PressFBot {
     this.cluster = new ClusterManager(this);
     this.logger = createLogger('PressFBot', { file: './logs/bot.log' });
     this.events = new ListenerManager(this);
-    this.config = config;
     this.client = new Client(config.token, {
       maxShards: 'auto',
       intents: ['guilds', 'guildMessages']
     });
   }
 
-  async start() {
-    this.logger.info('Starting up instance...');
-    await new Promise(e => setTimeout(e, 2000));
+  start() {
+    return this.cluster.spawn();
+  }
 
+  async init() {
     this.logger.info('Loading up modules...');
     await this.modules.start();
 
     this.logger.info('Loaded modules! Now loading listeners...');
     await this.events.start();
 
-    this.logger.info('Loaded listeners! Now booting up clusters...');
-    await this.cluster.spawn();
+    this.logger.info('Loaded listeners! Now connecting to PostgreSQL!');
+    await this.database.connect();
 
-    this.logger.info('Loaded clusters! Now connecting to Discord!');
+    this.logger.info('Connected to PostgreSQL, now connecting to Discord...');
     await this.client.connect()
       .then(() => this.logger.info('Now authorizing with Discord using WebSockets...'));
   }

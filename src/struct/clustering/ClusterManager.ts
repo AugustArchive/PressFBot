@@ -45,7 +45,7 @@ export class ClusterManager extends Collection<Cluster> {
     super();
 
     // TODO: Use CPU count when we reached ~5-10k guilds
-    this.clusterCount = 2;
+    this.clusterCount = 1;
     this.retries = 0;
     this.logger = createLogger('ClusterManager');
     this.http = new HttpClient();
@@ -71,8 +71,8 @@ export class ClusterManager extends Collection<Cluster> {
 
       try {
         await cluster.spawn();
-      } catch {
-        this.logger.error(`Cluster #${idx} failed on us. Queued for respawn!`);
+      } catch(ex) {
+        this.logger.error(`Cluster #${idx} failed on us. Queued for respawn!`, ex);
         failed.add(cluster);
       }
     }
@@ -82,6 +82,7 @@ export class ClusterManager extends Collection<Cluster> {
       this._queueForRespawn(failed);
     } else {
       this.logger.info('Loaded all clusters!');
+      for (const cluster of this.values()) cluster.emit('loaded');
     }
   }
 
@@ -130,6 +131,9 @@ export class ClusterManager extends Collection<Cluster> {
     if (isMaster) {
       this.logger.info('Process is master, now spawning clusters...');
       await this._start();
+    } else {
+      this.logger.info('Starting up bot instance');
+      await this.bot.init();
     }
   }
 

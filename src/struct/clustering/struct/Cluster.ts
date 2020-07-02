@@ -83,11 +83,6 @@ export default class Cluster extends EventEmitter {
     this.bot = bot;
     this.ipc = new ClusterIPC(bot, id);
     this.id = id;
-
-    this.once('ready', () => {
-      this.logger.info('We are ready!');
-      this.status = Status.Online;
-    });
   }
 
   kill() {
@@ -109,29 +104,22 @@ export default class Cluster extends EventEmitter {
   }
 
   async spawn() {
-    this.logger.info(`Initialising cluster! (Serving ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
+    this.logger.info(`Initialising cluster! (Serving shards ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
     this.worker = fork({
       CLUSTER_SHARDS: this.shards.join(', '),
       CLUSTER_ID: this.id
     });
 
     this.worker.once('exit', this._onExited.bind(this));
-    await this._readyUp(this.shards.length);
+    this.status = Status.Online;
     await sleep(5000);
   }
 
   private async _onExited(code: number, signal: string) {
     this.status = Status.Offline;
     this.worker = undefined;
-
-    await this.respawn();
+    
     this.logger.warn(`Worker for cluster has exited with code ${code} and signal ${signal}, now respawning...`);
-  }
-
-  private _readyUp(shardCount: number) {
-    return new Promise<void>((resolve, reject) => {
-      this.once('ready', resolve);
-      setTimeout(() => reject(new Error(`Cluster #${this.id} took too long to get ready.`)), (30000 * shardCount));
-    });
+    await this.respawn();
   }
 }

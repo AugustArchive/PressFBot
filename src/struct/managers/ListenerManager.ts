@@ -41,12 +41,12 @@ export default class ListenerManager extends Collection<Listener> {
     this.bot = bot;
   }
 
-  private _addToClient(events: EventDefinition[]) {
+  private _addToClient(listener: Listener, events: EventDefinition[]) {
     for (const event of events) {
       this.logger.info(`Now adding event ${event.event} to the emitter...`);
       const wrapper = async (...args: any[]) => {
         try {
-          await event.run(...args);
+          await event.run.apply(listener, args);
         } catch (ex) {
           this.logger.error(`Unable to emit event ${event.event}:`, ex);
         }
@@ -78,7 +78,7 @@ export default class ListenerManager extends Collection<Listener> {
 
       listener.addEvents(definitions);
       this.set(listener.name, listener);
-      this._addToClient(definitions);
+      this._addToClient(listener, definitions);
 
       this.logger.info(`Added ${listener.name} listener to the registry`);
     }

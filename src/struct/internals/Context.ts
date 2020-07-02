@@ -25,6 +25,7 @@ import { EmbedBuilder } from './EmbedBuilder';
 import type PressFBot from './PressFBot';
 import { unembedify } from '../../util';
 import ArgumentParser from './ArgParser';
+import { Context } from '.';
 
 function resolveEmbed(embed: unknown): EmbedOptions {
   if (embed instanceof EmbedBuilder) return embed.build();
@@ -56,14 +57,14 @@ export default class CommandContext {
   }
 
   get self() {
-    return this.guild?.members.get(this.bot.client.user.id)!;
+    return this.guild!.members.get(this.bot.client.user.id)!;
   }
 
   send(content: string, embed?: EmbedOptions | EmbedBuilder) {
-    return this.message.channel.createMessage({
-      content,
-      embed: resolveEmbed(embed)
-    });
+    const obj = { content };
+    if (embed !== undefined) obj['embed'] = resolveEmbed(embed);
+
+    return this.message.channel.createMessage(obj);
   }
 
   embed(content: EmbedOptions | EmbedBuilder) {

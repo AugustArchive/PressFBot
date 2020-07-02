@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import type { Message, TextChannel } from 'eris';
+import { Message, TextChannel } from 'eris';
 import { Event, Listener } from '../struct';
 
 export default class MessageListener extends Listener {

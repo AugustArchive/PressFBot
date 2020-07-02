@@ -5,6 +5,12 @@
   "main": "build/main.js",
   "author": "August <august@augu.dev>",
   "repository": "https://github.com/auguwu/PressFBot",
+  "scripts": {
+    "prepare": "rm -fr node_modules/@augu/logging/node_modules",
+    "build": "yarn lint && rm -fr build && yarn tsc && yarn move",
+    "move": "cp src/config.json build/config.json",
+    "lint": "eslint src --ext .ts --fix"
+  },
   "dependencies": {
     "@augu/immutable": "0.2.5",
     "@augu/logging": "1.0.2",
@@ -22,6 +28,6 @@
     "@types/pg": "7.14.3",
     "@types/node": "14.0.14",
     "eslint": "7.3.1",
-    "typescript": "3.9.5"
+    "typescript": "3.9.6"
   }
 }

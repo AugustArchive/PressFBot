@@ -24,6 +24,10 @@ import { createLogger, Logger } from '@augu/logging';
 import type PressFBot from '../internals/PressFBot';
 import pg from 'pg';
 
+interface DatabaseExistsArgs {
+  exists: boolean;
+}
+
 export default class DatabaseManager {
   public connected: boolean = false;
   private client!: pg.PoolClient;
@@ -47,42 +51,38 @@ export default class DatabaseManager {
       return;
     }
 
-    const result = await this.query('select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\'pressfbot\'))');
-    console.log(result);
+    const result = await this.query<DatabaseExistsArgs>('select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(\'pressfbot\'))');
+    if (!result!.exists) {
+      this.logger.info('Database "pressfbot" doesn\'t exist! Creating it...');
+      await Promise.all([this.query('CREATE DATABASE pressfbot'), await this.query(`grant all privileges on database pressfbot to ${this.bot.config.database.username}`)]);
+      this.logger.info('Created database "pressfbot!"');
+    }
+
+    this.logger.info('Database exists (or has been created), now creating tables...');
+    await this.query('CREATE TABLE IF NOT EXISTS users(id varchar(40) NOT NULL, voted boolean NOT NULL);');
 
     this.checked = true;
     this.logger.info('Database has been checked.');
   }
 
   async connect() {
-    if (this.connected) {
-      this.logger.warn('Pool is already connected, why connect again?');
-      return;
-    }
-
     this.client = await this.pool.connect();
-    this.connected = true;
-    this.logger.info('Connected to PostgreSQL, doing basic checks...');
-
     await this._check();
+    
+    this.connected = true;
+    this.logger.info('Connected to PostgreSQL!');
   }
 
   async dispose() {
-    if (!this.connected) {
-      this.logger.warn('Pool is already disconnected, why dispose an instance again?');
-      return;
-    }
-
     await this.pool.end();
     this.connected = false;
-
     this.logger.warn('Pool has been destroyed');
   }
 
   query<T>(query: string | pg.QueryConfig<T[]>) {
     this.bot.statistics.dbCalls++;
-    return new Promise<T>((resolve, reject) => this.client.query(query).then((result: pg.QueryResult<T>) => {
-      if (result.rowCount < 1) return reject(new Error('Result was not found'));
+    return new Promise<T | null>((resolve, reject) => this.client.query(query).then((result: pg.QueryResult<T>) => {
+      if (result.rowCount < 1) return resolve(null);
       else return resolve(result.rows[0]);
     }));
   }

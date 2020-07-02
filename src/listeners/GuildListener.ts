@@ -22,7 +22,7 @@
 
 import { Logger, createLogger } from '@augu/logging';
 import { Event, Listener } from '../struct';
-import type { Guild } from 'eris';
+import { Guild } from 'eris';
 
 export default class GuildListener extends Listener {
   private logger: Logger = createLogger('GuildListener');

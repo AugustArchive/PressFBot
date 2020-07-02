@@ -70,7 +70,7 @@ export default class CommandService {
       //const user = await this.bot.database.getUser(m.author.id);
       const random = Math.random();
 
-      if (random <= 0.9) m.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.'); 
+      if (random >= 0.9) m.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.'); 
       return m.channel.createMessage(`**${m.member ? m.member.nick ? m.member.nick! : m.author.username : m.author.username}** has paid their respect.`);
     }
 
@@ -106,10 +106,11 @@ export default class CommandService {
             'If this command keeps failing, report it to <@280158289667555328> at <https://discord.gg/yDnbEDH>',
             '',
             '```js',
-            `[${ex.name}] ${ex.message.shift(ex.message.indexOf(ex.name) + 1)}`,
+            `[${ex.name}] ${ex.message.slice(ex.message.indexOf(ex.name) + 1)}`,
             '```'
           ].join('\n'));
 
+        this.bot.logger.error(`Unable to run ${command.info.name}:`, ex);
         return ctx.embed(embed);
       }
     }
