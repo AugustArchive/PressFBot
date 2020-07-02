@@ -20,23 +20,26 @@
  * SOFTWARE.
  */
 
-import { Logger, createLogger } from '@augu/logging';
-import { Event, Listener } from '../struct';
-import type { Guild } from 'eris';
+import { Module, Command, Context } from '../struct';
 
-export default class GuildListener extends Listener {
-  private logger: Logger = createLogger('GuildListener');
+export default class CoreModule extends Module {
   constructor() {
-    super('guild');
+    super({
+      description: 'Basic module, nothing much',
+      visible: true,
+      name: 'core'
+    });
   }
 
-  @Event('guildCreate')
-  async guildCreate(guild: Guild) {
-    this.logger.info(`Joined ${guild.name} (${guild.id})`);
-  }
-
-  @Event('guildDelete')
-  async guildDelete(guild: Guild) {
-    this.logger.info(`Left ${guild.name} (${guild.id})`);
+  @Command({
+    description: 'Test command, nothing special',
+    ownerOnly: true,
+    cooldown: 3,
+    aliases: ['test'],
+    usage: '<...args>',
+    name: 'debug'
+  })
+  async main(ctx: Context) {
+    return ctx.send('gay');
   }
 }

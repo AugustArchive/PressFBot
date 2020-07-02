@@ -20,6 +20,9 @@
  * SOFTWARE.
  */
 
+import Context from './Context';
+
 export * from './EmbedBuilder';
 export * from './Listener';
 export * from './Module';
+export { Context };

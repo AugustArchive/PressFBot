@@ -97,7 +97,7 @@ export default class CommandService {
 
       this.handleRatelimit(ctx, command, m.author);
       try {
-        await command.run(ctx);
+        await command.run.apply(module, [ctx]);
         this.bot.statistics.inc(command);
       } catch (ex) {
         const embed = this.bot.getEmbed()

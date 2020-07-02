@@ -26,10 +26,14 @@ import { ClusterManager } from '../clustering';
 import { EmbedBuilder } from './EmbedBuilder';
 import DatabaseManager from '../managers/DatabaseManager';
 import ListenerManager from '../managers/ListenerManager';
+import CommandService from '../services/CommandService';
+import BotlistService from '../services/BotlistService';
 import ModuleManager from '../managers/ModuleManager';
 import { Client } from 'eris';
 
 export interface Config {
+  environment: 'development' | 'production';
+  botlists?: BotlistConfig;
   database: DatabaseConfig;
   token: string;
 }
@@ -41,9 +45,15 @@ interface DatabaseConfig {
   host: string;
 }
 
+interface BotlistConfig {
+  boats?: string;
+}
+
 export default class PressFBot {
+  public commandService: CommandService;
   public statistics: CommandStatsManager;
   public database: DatabaseManager;
+  public botlists: BotlistService;
   public modules: ModuleManager;
   public cluster: ClusterManager;
   public events: ListenerManager;
@@ -52,8 +62,10 @@ export default class PressFBot {
   public client: Client;
 
   constructor(config: Config) {
+    this.commandService = new CommandService(this);
     this.statistics = new CommandStatsManager();
     this.database = new DatabaseManager(this);
+    this.botlists = new BotlistService(this);
     this.modules = new ModuleManager(this);
     this.cluster = new ClusterManager(this);
     this.logger = createLogger('PressFBot', { file: './logs/bot.log' });
@@ -86,5 +98,15 @@ export default class PressFBot {
   getEmbed() {
     return new EmbedBuilder()
       .setColor(0x636366);
+  }
+
+  async dispose() {
+    this.logger.warn('Bot instance is now closing...');
+
+    await this.database.dispose();
+    this.client.disconnect({ reconnect: false });
+    this.cluster.kill();
+
+    this.logger.warn('Bot instance has closed');
   }
 }

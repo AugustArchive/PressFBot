@@ -21,10 +21,10 @@
  */
 
 import type { Message, TextChannel, EmbedOptions } from 'eris';
+import { EmbedBuilder } from './EmbedBuilder';
 import type PressFBot from './PressFBot';
 import { unembedify } from '../../util';
 import ArgumentParser from './ArgParser';
-import EmbedBuilder from './EmbedBuilder';
 
 function resolveEmbed(embed: unknown): EmbedOptions {
   if (embed instanceof EmbedBuilder) return embed.build();

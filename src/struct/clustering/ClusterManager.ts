@@ -138,6 +138,11 @@ export class ClusterManager extends Collection<Cluster> {
     for (const cluster of this.values()) await cluster.respawn();
   }
 
+  kill() {
+    this.logger.warn('Received to kill all clusters');
+    for (const cluster of this.values()) cluster.kill();
+  }
+
   async restart(id: number) {
     const cluster = this.get(id);
     if (cluster) {

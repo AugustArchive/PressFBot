@@ -55,6 +55,17 @@ export default class BotlistService {
     }
 
     clearInterval(this.interval);
-    this.logger.info('on and on...'); // put it on me~
+    this.logger.info('Botlist posting has been disposed');
+  }
+
+  private async _post() {
+    if (this.bot.config.environment === 'development' || !this.bot.config.hasOwnProperty('botlists')) {
+      this.logger.warn('Bot is in development or doesn\'t have the "botlists" config property set; not posting.');
+      if (this.interval) this.stop();
+
+      return;
+    } 
+
+    // TODO: bot posting here hoes
   }
 }
