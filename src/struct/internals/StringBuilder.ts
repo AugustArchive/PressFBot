@@ -20,10 +20,33 @@
  * SOFTWARE.
  */
 
-import Context from './Context';
+export class StringBuilder {
+  private items: string[];
 
-export * from './StringBuilder';
-export * from './EmbedBuilder';
-export * from './Listener';
-export * from './Module';
-export { Context };
+  constructor(inject?: string | string[]) {
+    this.items = [];
+
+    if (inject) {
+      if (typeof inject === 'string') this.appendln(inject);
+      else if (inject instanceof Array) {
+        for (const item of inject) this.appendln(item);
+      } else {
+        throw new Error(`Excepted 'string' or 'array', gotten ${typeof inject}`);
+      }
+    }
+  }
+
+  appendln(item: string | string[]) {
+    if (Array.isArray(item)) {
+      for (const i of item) this.items.push(`${i}\n`);
+    } else {
+      this.items.push(item);
+    }
+
+    return this;
+  }
+
+  build(dil: string = '\n') {
+    return this.items.join(dil);
+  }
+}

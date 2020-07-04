@@ -17,8 +17,7 @@
     "@augu/orchid": "1.1.1",
     "common-tags": "1.8.0",
     "eris": "0.13.3",
-    "pg": "8.2.1",
-    "veza": "1.1.0"
+    "pg": "8.2.1"
   },
   "devDependencies": {
     "@augu/eslint-config": "1.6.0",

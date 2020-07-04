@@ -24,10 +24,17 @@ import { HttpClient, middleware } from '@augu/orchid';
 import { Logger, createLogger } from '@augu/logging';
 import { Collection, Queue } from '@augu/immutable';
 import Cluster, { Status } from './struct/Cluster';
-import { OPCodes, IPC } from './types';
 import type PressFBot from '../internals/PressFBot';
 import { chunkArray } from '../../util';
-import { isMaster, isWorker } from 'cluster';
+import { isMaster } from 'cluster';
+import { OPCodes } from './types';
+import broker from './types/data';
+
+export interface ShardClusterInfo {
+  first: number;
+  total: number;
+  last: number;
+}
 
 /**
  * Represents the manager for all clusters
@@ -38,7 +45,7 @@ export class ClusterManager extends Collection<Cluster> {
   private retries: number;
   private logger: Logger;
   private http: HttpClient;
-  private bot: PressFBot;
+  public bot: PressFBot;
 
   constructor(bot: PressFBot) {
     super();
@@ -50,6 +57,7 @@ export class ClusterManager extends Collection<Cluster> {
     this.http = new HttpClient();
     this.bot = bot;
 
+    process.on('message', broker.bind(this));
     this.http.use(middleware.logging({ binding: this.logger.orchid }));
   }
 
@@ -61,9 +69,10 @@ export class ClusterManager extends Collection<Cluster> {
     const tuple = chunkArray(shardArray, this.clusterCount);
     const failed = new Queue<Cluster>();
 
+    const info = this.getShardPerClusterInfo();
     for (let idx = 0; idx < this.clusterCount; idx++) {
       const shards = tuple.shift()!;
-      const cluster = new Cluster(this.bot, idx, shards);
+      const cluster = new Cluster(this.bot, idx, info[idx]);
       this.set(idx, cluster);
 
       try {
@@ -127,9 +136,9 @@ export class ClusterManager extends Collection<Cluster> {
     if (isMaster) {
       this.logger.info('Process is master, now spawning clusters...');
       await this._start();
-    } else if (isWorker) {
+    } else {
       this.logger.info('Starting up bot instance');
-      await this.bot.init();
+      process.nextTick(() => this.bot.init());
     }
   }
 
@@ -154,10 +163,12 @@ export class ClusterManager extends Collection<Cluster> {
     }
   }
 
-  send<T = unknown>(op: OPCodes, callback: (data: T) => void, d?: T) {
+  send<T = unknown>(op: OPCodes, callback: (data: T) => void): boolean;
+  send<T = unknown>(op: OPCodes, data: T, callback: (data: T) => void): boolean;
+  send<T = unknown>(op: OPCodes, d: T | ((data: T) => void), callback?: (data: T) => void) {
     if (process.send) {
       process.send({
-        fetch: callback,
+        fetch: callback || d,
         op,
         t: Date.now(),
         d
@@ -168,5 +179,34 @@ export class ClusterManager extends Collection<Cluster> {
       this.logger.warn('Missing type Process#send?');
       return false;
     }
+  }
+
+  // Credit: https://github.com/brussell98/megane/blob/master/src/sharding/ShardManager.ts#L284
+  getShardPerClusterInfo() {
+    const info: ShardClusterInfo[] = [];
+    const per = Math.floor(this.shardCount / this.clusterCount);
+    const leftovers = this.shardCount % this.clusterCount;
+
+    let current = 0;
+    for (let i = 0; i < this.clusterCount; i++) {
+      info.push({
+        first: current,
+        total: this.shardCount,
+        last: current + per - 1 + (leftovers > i ? 1 : 0)
+      });
+
+      current += per + (leftovers > i ? 1 : 0);
+    }
+
+    return info;
+  }
+
+  getClusterByGuild(guildId: number) {
+    const shard = Number((BigInt(guildId) >> BigInt(22)) % BigInt(this.get(0)!.shards.total || 0));
+    for (const cluster of this.values()) {
+      if (cluster.shards.first <= shard && cluster.shards.last >= shard) return cluster.id;
+    }
+
+    return null;
   }
 }

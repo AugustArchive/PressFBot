@@ -49,6 +49,7 @@ export namespace Misc {
   /** Represents the shard information we needed */
   export interface ShardInfo {
     latency: string;
+    cluster: number;
     guilds: number;
     status: Misc.ShardStatus;
     users: number;
@@ -75,8 +76,6 @@ export namespace Misc {
 
 export enum OPCodes {
   CollectStats = 'collectStats',
-  RestartAll = 'restartAll',
-  Restart = 'restart',
   Ready = 'ready'
 }
 

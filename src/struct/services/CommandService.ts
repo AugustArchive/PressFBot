@@ -67,10 +67,10 @@ export default class CommandService {
       m.content === 'F' ||
       m.content === '01000110'
     ) {
-      //const user = await this.bot.database.getUser(m.author.id);
+      const user = await this.bot.database.getUser(Number(m.author.id));
       const random = Math.random();
 
-      if (random >= 0.9) m.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.'); 
+      if (!user.voted && random >= 0.9) m.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.'); 
       return m.channel.createMessage(`**${m.member ? m.member.nick ? m.member.nick! : m.author.username : m.author.username}** has paid their respect.`);
     }
 

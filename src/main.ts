@@ -26,6 +26,9 @@ import { existsSync } from 'fs';
 import { getPath } from './util';
 import leeks from 'leeks.js';
 
+// eslint-disable-next-line
+global.noop = () => {};
+
 const logger = createLogger('Master');
 if (!existsSync(getPath('config.json'))) {
   logger.error(`Missing "config.json" in path ${leeks.colors.gray(getPath('config.json'))}.`);

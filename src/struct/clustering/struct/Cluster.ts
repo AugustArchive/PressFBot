@@ -21,8 +21,10 @@
  */
 
 import { createLogger, Logger } from '@augu/logging';
+import { ShardClusterInfo } from '../ClusterManager';
 import { fork, Worker } from 'cluster';
 import type PressFBot from '../../internals/PressFBot';
+import { OPCodes } from '../types';
 import { sleep } from '../../../util';
 
 export enum Status {
@@ -55,7 +57,7 @@ export default class Cluster {
   public status: Status;
 
   /** The amount of shards we allocated for this cluster */
-  public shards: number[];
+  public shards: ShardClusterInfo;
 
   /** The bot instance */
   private bot: PressFBot;
@@ -69,7 +71,7 @@ export default class Cluster {
    * @param id The cluster's ID
    * @param shards The amount of shards we have allocated for this cluster
    */
-  constructor(bot: PressFBot, id: number, shards: number[]) {
+  constructor(bot: PressFBot, id: number, shards: ShardClusterInfo) {
     this.logger = createLogger(`Cluster #${id}`);
     this.status = Status.NotReady;
     this.shards = shards;
@@ -96,17 +98,35 @@ export default class Cluster {
   }
 
   async spawn() {
-    this.logger.info(`Initialising cluster #${this.id}! (Serving shards ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
+    this.logger.info(`Initialising cluster #${this.id}! (Serving shards ${this.shards.total} (${this.shards.first}-${this.shards.last}) out of ${this.bot.cluster.clusterCount} clusters)`);
     this.worker = fork({
-      CLUSTER_SHARDS: this.shards.join(', '),
+      CLUSTER_SHARDS: this.shards,
       CLUSTER_ID: this.id
     });
 
     this.worker.once('exit', this._onExited.bind(this));
     this.worker.once('online', this._online.bind(this));
 
-    this.status = Status.Online;
     await sleep(5000);
+  }
+  
+  setStatus(type: 'offline' | 'online') {
+    let status: Status;
+    switch (type) {
+      case 'online': {
+        status = Status.Online;
+      } break;
+
+      case 'offline': {
+        status = Status.Offline;
+      } break;
+
+      default: {
+        status = Status.Offline;
+      }
+    }
+
+    this.status = status;
   }
 
   private async _onExited(code: number, signal: string) {
@@ -119,5 +139,6 @@ export default class Cluster {
 
   private _online() {
     this.logger.info(`Worker #${this.worker!.id} has spawned`);
+    this.bot.cluster.send(OPCodes.Ready, this.id, noop);
   }
 }

@@ -28,6 +28,11 @@ interface DatabaseExistsArgs {
   exists: boolean;
 }
 
+interface User {
+  voted: boolean;
+  id: number;
+}
+
 export default class DatabaseManager {
   public connected: boolean = false;
   private client!: pg.PoolClient;
@@ -59,7 +64,7 @@ export default class DatabaseManager {
     }
 
     this.logger.info('Database exists (or has been created), now creating tables...');
-    await this.query('CREATE TABLE IF NOT EXISTS users(id varchar(40) NOT NULL, voted boolean NOT NULL);');
+    await this.query('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, voted boolean);');
 
     this.checked = true;
     this.logger.info('Database has been checked.');
@@ -81,9 +86,23 @@ export default class DatabaseManager {
 
   query<T>(query: string | pg.QueryConfig<T[]>) {
     this.bot.statistics.dbCalls++;
-    return new Promise<T | null>((resolve, reject) => this.client.query(query).then((result: pg.QueryResult<T>) => {
+    return new Promise<T | null>((resolve) => this.client.query(query).then((result: pg.QueryResult<T>) => {
       if (result.rowCount < 1) return resolve(null);
       else return resolve(result.rows[0]);
     }));
+  }
+
+  async getUser(userID: number): Promise<User> {
+    const query = await this.query<User>(`SELECT * FROM users WHERE id = '${userID}';`);
+    if (query === null) {
+      await this.query(`INSERT INTO users (id, voted) VALUES (${userID}, false);`);
+      return this.getUser(userID);
+    }
+
+    return query!;
+  }
+
+  setVoted(userID: number, value: boolean) {
+    return this.query<User>(`UPDATE users SET voted = ${value} WHERE id = '${userID}';`);
   }
 }
