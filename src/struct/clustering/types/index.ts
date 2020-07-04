@@ -74,11 +74,15 @@ export namespace Misc {
 }
 
 export enum OPCodes {
-  ShardInfo
+  CollectStats = 'collectStats',
+  RestartAll = 'restartAll',
+  Restart = 'restart',
+  Ready = 'ready'
 }
 
-export enum IPCEvents {
-  Ready = 'ready',
-  Restart = 'restart',
-  RestartAll = 'restartAll'
+export interface MessagePacket<T = unknown> {
+  fetch(data: T): void;
+  op: OPCodes;
+  d?: T;
+  t: number;
 }

@@ -24,10 +24,10 @@ import { HttpClient, middleware } from '@augu/orchid';
 import { Logger, createLogger } from '@augu/logging';
 import { Collection, Queue } from '@augu/immutable';
 import Cluster, { Status } from './struct/Cluster';
+import { OPCodes, IPC } from './types';
 import type PressFBot from '../internals/PressFBot';
 import { chunkArray } from '../../util';
-import { isMaster } from 'cluster';
-import MasterIPC from './ipc/MasterIPC';
+import { isMaster, isWorker } from 'cluster';
 
 /**
  * Represents the manager for all clusters
@@ -38,7 +38,6 @@ export class ClusterManager extends Collection<Cluster> {
   private retries: number;
   private logger: Logger;
   private http: HttpClient;
-  private ipc!: MasterIPC;
   private bot: PressFBot;
 
   constructor(bot: PressFBot) {
@@ -55,8 +54,6 @@ export class ClusterManager extends Collection<Cluster> {
   }
 
   private async _start() {
-    this.ipc = new MasterIPC(this.bot);
-    this.clusterCount = Math.floor(this.clusterCount);
     this.shardCount = await this._fetchShards();
 
     this.logger.info(`Spawning ${this.clusterCount} clusters with ${this.shardCount} shards...`);
@@ -82,7 +79,6 @@ export class ClusterManager extends Collection<Cluster> {
       this._queueForRespawn(failed);
     } else {
       this.logger.info('Loaded all clusters!');
-      for (const cluster of this.values()) cluster.emit('loaded');
     }
   }
 
@@ -131,7 +127,7 @@ export class ClusterManager extends Collection<Cluster> {
     if (isMaster) {
       this.logger.info('Process is master, now spawning clusters...');
       await this._start();
-    } else {
+    } else if (isWorker) {
       this.logger.info('Starting up bot instance');
       await this.bot.init();
     }
@@ -155,6 +151,22 @@ export class ClusterManager extends Collection<Cluster> {
       await cluster.respawn();
     } else {
       throw new Error(`Cluster #${id} didn't spawn at all`);
+    }
+  }
+
+  send<T = unknown>(op: OPCodes, callback: (data: T) => void, d?: T) {
+    if (process.send) {
+      process.send({
+        fetch: callback,
+        op,
+        t: Date.now(),
+        d
+      });
+
+      return true;
+    } else {
+      this.logger.warn('Missing type Process#send?');
+      return false;
     }
   }
 }

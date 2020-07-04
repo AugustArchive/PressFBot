@@ -120,5 +120,15 @@ export function unembedify(embed: EmbedOptions) {
   return text;
 }
 
+export function formatSize(bytes: number) {
+  const kilo = bytes / 1024;
+  const mega = kilo / 1024;
+  const giga = mega / 1024;
+
+  if (kilo < 1024) return `${kilo.toFixed(1)}KB`;
+  else if (kilo > 1024 && mega < 1024) return `${mega.toFixed(1)}MB`;
+  else return `${giga.toFixed(1)}GB`; 
+}
+
 export const sep = process.platform === 'win32' ? '\\' : '/';
 export const getPath = (...paths: string[]) => `${process.cwd()}${sep}${paths.join(sep)}`;

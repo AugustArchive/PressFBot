@@ -22,9 +22,7 @@
 
 import { createLogger, Logger } from '@augu/logging';
 import { fork, Worker } from 'cluster';
-import { EventEmitter } from 'events';
 import type PressFBot from '../../internals/PressFBot';
-import ClusterIPC from '../ipc/ClusterIPC';
 import { sleep } from '../../../util';
 
 export enum Status {
@@ -46,7 +44,7 @@ export enum Status {
  * use the amount of CPU cores we have on this dedicated system (**[os](https://nodejs.org/api/os.html)#cpus**),
  * spawn all instances (**[cluster](https://nodejs.org/api/cluster.html)#fork**)
  */
-export default class Cluster extends EventEmitter {
+export default class Cluster {
   /** Logger instance for this cluster */
   private logger: Logger;
 
@@ -62,9 +60,6 @@ export default class Cluster extends EventEmitter {
   /** The bot instance */
   private bot: PressFBot;
 
-  /** The IPC controller for this cluster */
-  public ipc: ClusterIPC;
-
   /** The cluster's ID */
   public id: number;
 
@@ -75,13 +70,10 @@ export default class Cluster extends EventEmitter {
    * @param shards The amount of shards we have allocated for this cluster
    */
   constructor(bot: PressFBot, id: number, shards: number[]) {
-    super();
-
     this.logger = createLogger(`Cluster #${id}`);
     this.status = Status.NotReady;
     this.shards = shards;
     this.bot = bot;
-    this.ipc = new ClusterIPC(bot, id);
     this.id = id;
   }
 
@@ -104,13 +96,15 @@ export default class Cluster extends EventEmitter {
   }
 
   async spawn() {
-    this.logger.info(`Initialising cluster! (Serving shards ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
+    this.logger.info(`Initialising cluster #${this.id}! (Serving shards ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
     this.worker = fork({
       CLUSTER_SHARDS: this.shards.join(', '),
       CLUSTER_ID: this.id
     });
 
     this.worker.once('exit', this._onExited.bind(this));
+    this.worker.once('online', this._online.bind(this));
+
     this.status = Status.Online;
     await sleep(5000);
   }
@@ -121,5 +115,9 @@ export default class Cluster extends EventEmitter {
     
     this.logger.warn(`Worker for cluster has exited with code ${code} and signal ${signal}, now respawning...`);
     await this.respawn();
+  }
+
+  private _online() {
+    this.logger.info(`Worker #${this.worker!.id} has spawned`);
   }
 }

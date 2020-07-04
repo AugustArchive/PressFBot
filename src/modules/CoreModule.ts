@@ -21,25 +21,60 @@
  */
 
 import { Module, Command, Context } from '../struct';
+import { stripIndents } from 'common-tags';
+import { formatSize } from '../util';
 
 export default class CoreModule extends Module {
   constructor() {
     super({
-      description: 'Basic module, nothing much',
+      description: 'Some miscellaneous commands, nothing much',
       visible: true,
       name: 'core'
     });
   }
 
   @Command({
-    description: 'Test command, nothing special',
-    ownerOnly: true,
-    cooldown: 3,
-    aliases: ['test'],
-    usage: '<...args>',
-    name: 'debug'
+    description: 'Retrives cluster information',
+    ownerOnly: false,
+    cooldown: 5,
+    aliases: ['cluster', 'clu', 'cluster-info'],
+    usage: '',
+    name: 'clusterinfo'
   })
-  async main(ctx: Context) {
-    return ctx.send('gay');
+  async clusterinfo(ctx: Context) {
+    const message = await ctx.send('Fetching cluster information...');
+    const info = await this.bot.cluster.getInfo();
+
+    if (info === null) return message.edit('Unable to fetch information, was it parsed correctly?');
+    else {
+      const infos: string[] = [];
+      for (const data of info) {
+        infos.push(
+          `[ Cluster #${data.cluster} ]`, 
+          '',
+          `Heap Used: ${formatSize(data.heap)}`,
+          `RSS: ${formatSize(data.rss)}`,
+          'Shards: ',
+          ''
+        );
+
+        for (const shard of data.shards) infos.push(stripIndents`
+          #${shard.id} (${shard.id === (ctx.guild ? ctx.guild.shard.id : 0) ? 'current' : ''}):
+          G: ${shard.guilds} / U: ${shard.users} / L: ${shard.latency} / S: ${shard.status}
+        `);
+
+        infos.push('');
+      }
+
+      const embed = this.bot.getEmbed()
+        .setTitle('[ Cluster Information ]')
+        .setDescription(stripIndents`
+          \`\`\`prolog
+          ${infos.join('\n')}
+          \`\`\`
+        `).build();
+
+      return ctx.embed(embed);
+    }
   }
 }
