@@ -130,5 +130,20 @@ export function formatSize(bytes: number) {
   else return `${giga.toFixed(1)}GB`; 
 }
 
+// Credit: https://stackoverflow.com/a/6274398
+export function shuffleArray<T>(array: T[]) {
+  let counter = array.length;
+  while (counter > 0) {
+    const index = Math.floor(Math.random() * counter);
+    counter--;
+
+    const temp = array[index];
+    array[counter] = array[index];
+    array[index] = temp;
+  }
+
+  return array;
+}
+
 export const sep = process.platform === 'win32' ? '\\' : '/';
 export const getPath = (...paths: string[]) => `${process.cwd()}${sep}${paths.join(sep)}`;

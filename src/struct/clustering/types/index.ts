@@ -49,7 +49,6 @@ export namespace Misc {
   /** Represents the shard information we needed */
   export interface ShardInfo {
     latency: string;
-    cluster: number;
     guilds: number;
     status: Misc.ShardStatus;
     users: number;
@@ -80,8 +79,7 @@ export enum OPCodes {
 }
 
 export interface MessagePacket<T = unknown> {
-  fetch(data: T): void;
   op: OPCodes;
+  id: string;
   d?: T;
-  t: number;
 }

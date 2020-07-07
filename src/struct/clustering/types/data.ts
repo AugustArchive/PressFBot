@@ -1,23 +1,37 @@
 import type { ClusterManager as Manager } from '../ClusterManager';
 import { OPCodes, MessagePacket, Misc } from '.';
 import { createLogger } from '@augu/logging';
+import cluster from 'cluster';
+import { resolve } from 'path';
 
 export interface ShardArgs {
+  workers: WorkerArgs[];
   shards: Misc.ShardInfo[];
   heap: number;
   rss: number;
 }
 
+interface WorkerArgs {
+  memory: number;
+  dead: boolean;
+  cpu: number;
+  id?: number;
+}
+
 const logger = createLogger('Process / Message');
 export default function onMessage(this: Manager, packet: MessagePacket) {
-  if (!packet.hasOwnProperty('fetch') || !packet.hasOwnProperty('op')) {
-    logger.warn('Missing "fetch" or "op" in the packet, skipping');
+  if (!packet.hasOwnProperty('op')) {
+    logger.warn('Missing "op" in the packet, skipping');
+    return;
+  }
+
+  if (!this.expectingMessages.has(packet.id)) {
+    logger.error(`Packet "${packet.id}" was not found?`);
     return;
   }
 
   switch (packet.op) {
     case OPCodes.CollectStats: {
-      const msg = (packet as MessagePacket<ShardArgs>);
       const shards: Misc.ShardInfo[] = [];
       const memory = process.memoryUsage();
 
@@ -50,18 +64,45 @@ export default function onMessage(this: Manager, packet: MessagePacket) {
         });
       }
 
-      this;
-      msg.fetch({
+      const workers: WorkerArgs[] = [];
+      for (const worker of Object.values(cluster.workers)) {
+        if (worker === undefined) {
+          workers.push({
+            memory: 0,
+            dead: true,
+            cpu: 0
+          });
+        } else {
+          workers.push({
+            memory: process.memoryUsage().rss,
+            dead: worker!.isDead(),
+            cpu: process.cpuUsage().system,
+            id: worker!.id
+          });
+        }
+      }
+
+      const { resolve } = this.expectingMessages.get(packet.id)!;
+      resolve({
+        workers,
         shards,
         heap: memory.heapUsed,
         rss: memory.rss
       });
+
+      this.expectingMessages.delete(packet.id);
     } break;
 
     case OPCodes.Ready: {
       const msg = packet as MessagePacket<number>;
       const cluster = this.get(msg.d!);
-      cluster ? cluster.setStatus('online') : void 0;
+      const { resolve, reject } = this.expectingMessages.get(packet.id)!;
+
+      if (!cluster) return reject(new Error(`Cluster #${msg.d} was not found?`));
+      cluster.setStatus('online');
+      resolve();
+
+      this.expectingMessages.delete(packet.id);
     }
 
     default: break;

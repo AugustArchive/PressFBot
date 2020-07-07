@@ -21,7 +21,6 @@
  */
 
 import { createLogger, Logger } from '@augu/logging';
-import { ShardClusterInfo } from '../ClusterManager';
 import { fork, Worker } from 'cluster';
 import type PressFBot from '../../internals/PressFBot';
 import { OPCodes } from '../types';
@@ -57,7 +56,7 @@ export default class Cluster {
   public status: Status;
 
   /** The amount of shards we allocated for this cluster */
-  public shards: ShardClusterInfo;
+  public shards: number[];
 
   /** The bot instance */
   private bot: PressFBot;
@@ -71,7 +70,7 @@ export default class Cluster {
    * @param id The cluster's ID
    * @param shards The amount of shards we have allocated for this cluster
    */
-  constructor(bot: PressFBot, id: number, shards: ShardClusterInfo) {
+  constructor(bot: PressFBot, id: number, shards: number[]) {
     this.logger = createLogger(`Cluster #${id}`);
     this.status = Status.NotReady;
     this.shards = shards;
@@ -98,7 +97,7 @@ export default class Cluster {
   }
 
   async spawn() {
-    this.logger.info(`Initialising cluster #${this.id}! (Serving shards ${this.shards.total} (${this.shards.first}-${this.shards.last}) out of ${this.bot.cluster.clusterCount} clusters)`);
+    this.logger.info(`Initialising cluster #${this.id}! (Serving shards ${this.shards.join(', ')} out of ${this.bot.cluster.clusterCount} clusters)`);
     this.worker = fork({
       CLUSTER_SHARDS: this.shards,
       CLUSTER_ID: this.id
@@ -130,7 +129,7 @@ export default class Cluster {
   }
 
   private async _onExited(code: number, signal: string) {
-    this.status = Status.Offline;
+    this.setStatus('offline');
     this.worker = undefined;
     
     this.logger.warn(`Worker for cluster has exited with code ${code} and signal ${signal}, now respawning...`);
@@ -139,6 +138,6 @@ export default class Cluster {
 
   private _online() {
     this.logger.info(`Worker #${this.worker!.id} has spawned`);
-    this.bot.cluster.send(OPCodes.Ready, this.id, noop);
+    this.setStatus('online');
   }
 }
