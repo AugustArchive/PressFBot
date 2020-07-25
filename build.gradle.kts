@@ -25,7 +25,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id("com.github.johnrengelman.shadow") version "4.0.1"
-    id("com.diffplug.gradle.spotless") version "4.3.0"
+    id("com.diffplug.gradle.spotless") version "5.1.0"
     kotlin("jvm") version "1.3.72"
     application
     java
