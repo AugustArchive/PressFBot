@@ -43,7 +43,7 @@ repositories {
 
 dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("org.reflections:reflections:0.9.11")
+    implementation("org.reflections:reflections:0.9.12")
     implementation("com.squareup.okhttp3:okhttp:4.8.0")
     implementation("dev.augu.nino:Butterfly:0.2.0")
     implementation("org.slf4j:slf4j-api:1.7.25")
