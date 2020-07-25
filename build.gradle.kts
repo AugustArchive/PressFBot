@@ -46,7 +46,7 @@ dependencies {
     implementation("org.reflections:reflections:0.9.12")
     implementation("com.squareup.okhttp3:okhttp:4.8.0")
     implementation("dev.augu.nino:Butterfly:0.2.0")
-    implementation("org.slf4j:slf4j-api:1.7.25")
+    implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("redis.clients:jedis:3.3.0")
     implementation("net.dv8tion:JDA:4.2.0_181")
     implementation(kotlin("stdlib-jdk8"))
