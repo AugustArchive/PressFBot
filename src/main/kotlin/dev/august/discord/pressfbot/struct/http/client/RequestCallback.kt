@@ -8,7 +8,7 @@ import okhttp3.Response
 class RequestCallback(val callback: (Throwable?, HttpResponse?) -> Unit): Callback {
     override fun onFailure(call: Call, e: IOException) {
         e.printStackTrace()
-        callback(e, null)
+        return callback(e, null)
     }
 
     override fun onResponse(call: Call, response: Response) {
