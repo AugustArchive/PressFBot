@@ -2,6 +2,7 @@ package dev.august.discord.pressfbot.struct
 
 import dev.august.discord.pressfbot.struct.extensions.loadProperties
 import dev.august.discord.pressfbot.struct.http.server.WebhookServer
+import dev.august.discord.pressfbot.struct.managers.TimeoutsManager
 import dev.august.discord.pressfbot.struct.managers.CommandManager
 import dev.august.discord.pressfbot.struct.extensions.loadConfig
 import dev.august.discord.pressfbot.struct.managers.RedisManager
@@ -26,6 +27,7 @@ class PressFBot {
     lateinit var app: ApplicationInfo
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val commands: CommandManager = CommandManager()
+    val timeouts: TimeoutsManager = TimeoutsManager(this)
     var server: WebhookServer? = null
     val redis: RedisManager = RedisManager(this)
     val votes: VoteManager = VoteManager(this)

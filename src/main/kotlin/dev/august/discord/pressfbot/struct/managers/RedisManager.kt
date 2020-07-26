@@ -1,5 +1,6 @@
 package dev.august.discord.pressfbot.struct.managers
 
+import com.google.gson.Gson
 import dev.august.discord.pressfbot.struct.PressFBot
 import redis.clients.jedis.Jedis
 import org.slf4j.*
@@ -26,6 +27,8 @@ class RedisManager(private val bot: PressFBot) {
     }
 
     operator fun get(key: String): String? = client.get(key)
+    fun add(key: String, value: String) = client.set(key, value)
+    fun <T> add(key: String, value: T) = client.set(key, Gson().toJson(value))
     fun exists(key: String) = client.exists(key)
     fun delete(key: String) = client.del(key)
     fun keys(key: String) = client.keys(key)

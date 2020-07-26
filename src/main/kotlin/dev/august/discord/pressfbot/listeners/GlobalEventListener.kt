@@ -72,6 +72,7 @@ class GlobalEventListener(private val bot: PressFBot): ListenerAdapter() {
         logger.info("PressFBot is now online! Serving ${event.jda.guilds.size} (un)cached guilds.")
         event.jda.presence.setPresence(OnlineStatus.ONLINE, Activity.listening("fs in chat"))
 
+        bot.timeouts.reapply()
         if (bot.server != null) bot.server!!.start()
     }
 
