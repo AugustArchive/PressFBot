@@ -1,3 +1,24 @@
+/**
+ * Copyright (c) 2020 August
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package dev.august.discord.pressfbot.struct
 
 import dev.august.discord.pressfbot.struct.extensions.loadProperties
@@ -10,7 +31,6 @@ import dev.august.discord.pressfbot.struct.data.ApplicationInfo
 import dev.august.discord.pressfbot.struct.managers.VoteManager
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import dev.august.discord.pressfbot.struct.data.Config
-import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -50,7 +70,6 @@ class PressFBot {
 
         jda = DefaultShardManagerBuilder.create(config.token, GatewayIntent.GUILD_MESSAGES)
             .disableCache(CacheFlag.VOICE_STATE, CacheFlag.CLIENT_STATUS, CacheFlag.VOICE_STATE, CacheFlag.ACTIVITY, CacheFlag.EMOTE)
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
             .addEventListeners(GlobalEventListener(this))
             .setShardsTotal(-1)
             .setActivity(Activity.of(Activity.ActivityType.WATCHING, "the system load"))
