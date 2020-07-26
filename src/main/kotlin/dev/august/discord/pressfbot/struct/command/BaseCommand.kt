@@ -21,8 +21,8 @@ abstract class BaseCommand {
     /**
      * Format the command's usage
      */
-    fun format(ctx: CommandContext): String {
-        var usage = "${ctx.bot.config.prefix}${this.info.triggers[0]}"
+    fun format(): String {
+        var usage = "F_${this.info.triggers[0]}"
         if (this.info.usage.isNotEmpty() || this.info.usage.isNotBlank()) usage += " ${this.info.usage}"
 
         return usage
