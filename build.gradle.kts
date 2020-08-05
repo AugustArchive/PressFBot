@@ -48,7 +48,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:1.3.1")
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("redis.clients:jedis:3.3.0")
-    implementation("net.dv8tion:JDA:4.2.0_184")
+    implementation("net.dv8tion:JDA:4.2.0_185")
     implementation("io.ktor:ktor-gson:1.3.2")
     implementation("org.json:json:20200518")
     implementation(kotlin("stdlib-jdk8"))
