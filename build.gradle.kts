@@ -45,7 +45,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("org.reflections:reflections:0.9.12")
     implementation("com.squareup.okhttp3:okhttp:4.8.1")
-    implementation("io.ktor:ktor-server-netty:1.3.1")
+    implementation("io.ktor:ktor-server-netty:1.3.2")
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("redis.clients:jedis:3.3.0")
     implementation("net.dv8tion:JDA:4.2.0_187")
