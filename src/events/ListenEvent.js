@@ -22,16 +22,15 @@
 
 const { Event } = require('../structures');
 
-module.exports = class GuildLeftEvent extends Event {
+module.exports = class ListenEvent extends Event {
   constructor() {
-    super('eris', 'guildDelete');
+    super('laffey', 'listen');
   }
 
   /**
-   * Emits when the bot has left a new guild
-   * @param {import('eris').Guild} guild The guild
+   * Emits when Laffey is listening
    */
-  async emit(guild) {
-    this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+  async emit() {
+    this.bot.logger.info(`Laffey has connected to http://localhost:${this.bot.webhook.port} successfully`);
   }
 };

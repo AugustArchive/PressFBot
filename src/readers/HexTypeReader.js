@@ -20,18 +20,33 @@
  * SOFTWARE.
  */
 
-const { Event } = require('../structures');
+const { TypeReader } = require('../structures');
+const REGEX = /^[0-9a-fA-F]+$/;
 
-module.exports = class GuildLeftEvent extends Event {
+/**
+ * Represents a [HexTypeReader], which basically
+ * validates a string that includes a valid hexadecimal
+ */
+module.exports = class StringTypeReader extends TypeReader {
   constructor() {
-    super('eris', 'guildDelete');
+    super('hex');
   }
 
   /**
-   * Emits when the bot has left a new guild
-   * @param {import('eris').Guild} guild The guild
+   * Validates this type reader
+   * @param {string} val The value
+   * @param {import('../structures/Message')} msg The command message
    */
-  async emit(guild) {
-    this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+  validate(val, msg) {
+    return REGEX.test(val.replace('#', ''));
+  }
+
+  /**
+   * Parses this type reader
+   * @param {string} val The value
+   * @param {import('../structures/Message')} msg The command message
+   */
+  parse(val, msg) {
+    return val;
   }
 };

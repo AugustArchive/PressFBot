@@ -49,13 +49,13 @@ module.exports = class CommandService {
     if (msg.author.bot || msg.channel.type !== 0) return;
     if (!msg.channel.permissionsOf(this.bot.client.user.id).has('sendMessages')) return;
 
-    if (msg.content === 'f' || msg.content === 'F' || msg.content === '01000110') {
-      let user = await this.bot.database.getUser(msg.author.id);
-      if (user === null) {
-        await this.bot.database.createUser(msg.author.id);
-        user = await this.bot.database.getUser(msg.author.id);
-      }
+    let user = await this.bot.database.getUser(msg.author.id);
+    if (user === null) {
+      await this.bot.database.createUser(msg.author.id);
+      user = await this.bot.database.getUser(msg.author.id);
+    }
 
+    if (msg.content === 'f' || msg.content === 'F' || msg.content === '01000110') {
       // TODO: implement legacy shit
       const random = Math.random();
       if (!user.voted && random >= 0.9) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
@@ -107,7 +107,7 @@ module.exports = class CommandService {
         await command.run(ctx, ...allArgs);
         this.bot.statistics.inc(command);
       } catch(ex) {
-        const embed = this.bot.getEmbed()
+        const embed = await this.bot.getEmbed(ctx.sender.id)
           .setTitle(`[ Command ${command.name} failed ]`)
           .setDescription([
             `If this command keeps failing, report it to <@280158289667555328> at <${Support}>`,

@@ -111,7 +111,7 @@ module.exports = class CommandManager extends Collection {
       process.emit('SIGINT');
     }
 
-    for (const typeReader of readersArray.filter(s => ['UnionTypeReader.js', 'ArrayTypeReader.js'].includes(s))) {
+    for (const typeReader of readersArray.filter(s => ['UnionTypeReader.js'].includes(s))) {
       const TypeReader = await import(join(readersDir, typeReader));
 
       /** @type {import('../arguments/TypeReader')} */

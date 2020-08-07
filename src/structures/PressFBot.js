@@ -164,10 +164,15 @@ module.exports = class PressFBot {
 
   /**
    * Returns a new [EmbedBuilder]
+   * @param {string} id The user's ID (if specified)
    */
-  getEmbed() {
-    return new EmbedBuilder()
-      .setColor(constants.Color);
+  async getEmbed(id) {
+    if (!id) return new EmbedBuilder().setColor(constants.Color);
+    else {
+      const { color } = await this.database.getUser(id);
+      return new EmbedBuilder()
+        .setColor(color);
+    }
   }
 
   /**

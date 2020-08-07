@@ -20,18 +20,33 @@
  * SOFTWARE.
  */
 
-const { Event } = require('../structures');
+const { TypeReader } = require('../structures');
 
-module.exports = class GuildLeftEvent extends Event {
+/**
+ * Represents a [StringTypeReader], which basically
+ * validates a string lol
+ */
+module.exports = class StringTypeReader extends TypeReader {
   constructor() {
-    super('eris', 'guildDelete');
+    super('string');
   }
 
   /**
-   * Emits when the bot has left a new guild
-   * @param {import('eris').Guild} guild The guild
+   * Validates this type reader
+   * @param {string} val The value
+   * @param {import('../structures/Message')} msg The command message
    */
-  async emit(guild) {
-    this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+  validate(val, msg) {
+    if (val === '') return false;
+    return true;
+  }
+
+  /**
+   * Parses this type reader
+   * @param {string} val The value
+   * @param {import('../structures/Message')} msg The command message
+   */
+  parse(val, msg) {
+    return val;
   }
 };

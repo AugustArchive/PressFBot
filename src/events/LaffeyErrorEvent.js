@@ -22,16 +22,16 @@
 
 const { Event } = require('../structures');
 
-module.exports = class GuildLeftEvent extends Event {
+module.exports = class ErrorEvent extends Event {
   constructor() {
-    super('eris', 'guildDelete');
+    super('laffey', 'error');
   }
 
   /**
-   * Emits when the bot has left a new guild
-   * @param {import('eris').Guild} guild The guild
+   * Emits when a user failed a request
+   * @param {string} message The message
    */
-  async emit(guild) {
-    this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+  async emit(message) {
+    this.bot.logger.error(new Error(message));
   }
 };

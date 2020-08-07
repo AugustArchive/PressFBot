@@ -20,18 +20,31 @@
  * SOFTWARE.
  */
 
-const { Event } = require('../structures');
+const { Command } = require('../../structures');
 
-module.exports = class GuildLeftEvent extends Event {
+module.exports = class TestCommand extends Command {
   constructor() {
-    super('eris', 'guildDelete');
+    super({
+      description: 'some debug command, idk m8',
+      aliases: ['debug', 'owo'],
+      args: [
+        {
+          label: 'text',
+          prompt: 'Send something you nonce',
+          required: true,
+          type: 'string'
+        }
+      ],
+      name: 'test'
+    });
   }
 
   /**
-   * Emits when the bot has left a new guild
-   * @param {import('eris').Guild} guild The guild
+   * Runs the `test` command
+   * @param {import('../../structures/Message')} msg The command's message
+   * @param {string} text The text they sent
    */
-  async emit(guild) {
-    this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+  async run(msg, text) {
+    return msg.send(text);
   }
 };

@@ -20,18 +20,39 @@
  * SOFTWARE.
  */
 
-const { Event } = require('../structures');
+const { TypeReader } = require('../structures');
+const { rgbToInt } = require('../util');
 
-module.exports = class GuildLeftEvent extends Event {
+/**
+ * Represents a [RgbTypeReader], which basically
+ * validates a string that has 3 values as an Array
+ */
+module.exports = class StringTypeReader extends TypeReader {
   constructor() {
-    super('eris', 'guildDelete');
+    super('rgb');
   }
 
   /**
-   * Emits when the bot has left a new guild
-   * @param {import('eris').Guild} guild The guild
+   * Validates this type reader
+   * @param {string} val The value
+   * @param {import('../structures/Message')} msg The command message
    */
-  async emit(guild) {
-    this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+  validate(val, msg) {
+    const arr = val.split(', ');
+
+    if (arr.length < 3) return false;
+    else if (arr.some(a => isNaN(Number(a)))) return false;
+    else if (arr.some(a => Number(a) > 255)) return false;
+    return true;
+  }
+
+  /**
+   * Parses this type reader
+   * @param {string} val The value
+   * @param {import('../structures/Message')} msg The command message
+   */
+  parse(val, msg) {
+    const arr = val.split(', ');
+    return rgbToInt(arr[0], arr[1], arr[2]);
   }
 };
