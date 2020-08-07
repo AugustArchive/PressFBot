@@ -66,6 +66,10 @@ const config = parse({
       type: 'int',
       default: 6379
     },
+    IPC_PORT: {
+      type: 'int',
+      default: 9989
+    },
     LAFFEY_PORT: {
       type: 'int',
       default: 4200

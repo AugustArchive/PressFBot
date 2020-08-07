@@ -63,6 +63,7 @@ module.exports = class PressFBot {
         secret: config.laffey_secret,
         port: config.laffey_port
       },
+      ipcPort: config.ipc_port,
       owners: config.owners,
       token: config.token
     };
@@ -174,6 +175,7 @@ module.exports = class PressFBot {
  * @prop {number} laffey_port The port to create a new [Laffey] instance
  * @prop {string} redis_host The host to connect to Redis
  * @prop {number} redis_port The port to connect to Redis
+ * @prop {number} ipc_port The IPC port for IPC conenctions
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
  * 
@@ -181,6 +183,7 @@ module.exports = class PressFBot {
  * @prop {DatabaseConfig} database The database configuration
  * @prop {LaffeyConfig} laffey The [Laffey] configuration
  * @prop {RedisConfig} redis The redis configuration
+ * @prop {number} ipcPort The IPC port for IPC connections
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
  * 

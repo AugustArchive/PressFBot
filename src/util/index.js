@@ -163,7 +163,32 @@ module.exports = {
    * @param duration The amount of time to "sleep"
    * @returns An unknown Promise
    */
-  sleep: (duration) => new Promise(resolve => setTimeout(resolve, duration))
+  sleep: (duration) => new Promise(resolve => setTimeout(resolve, duration)),
+
+  /**
+   * If the OS is running Node.js 10 or higher
+   * @param {string} [version] The version to check
+   */
+  isNode10: (version) => {
+    const ver = version ? version.split('.')[0] : process.version.split('.')[0].replace('v', '');
+    const num = Number(ver);
+
+    return num === 10 || num > 10;
+  },
+
+  /**
+   * Formats any byte-integers to a humanizable string
+   * @param {number} bytes The number of bytes the file is
+   */
+  formatSize: (bytes) => {
+    const kilo = bytes / 1024;
+    const mega = kilo / 1024;
+    const giga = mega / 1024;
+
+    if (kilo < 1024) return `${kilo.toFixed(1)}KB`;
+    if (kilo > 1024 && mega < 1024) return `${mega.toFixed(1)}MB`;
+    else return `${giga.toFixed(1)}GB`;
+  }
 };
 
 /**

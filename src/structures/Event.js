@@ -29,14 +29,21 @@
 module.exports = class Event {
   /**
    * Creates a new [Event] class.
+   * @param {'laffey' | 'eris'} emitter The emitter to use
    * @param {string} event The event name
    */
-  constructor(event) {
+  constructor(emitter, event) {
     /**
      * The event's name
      * @type {string}
      */
     this.event = event;
+
+    /**
+     * The event emitter to use
+     * @type {'laffey' | 'eris'}
+     */
+    this.emitter = emitter;
   }
 
   /**
@@ -51,7 +58,7 @@ module.exports = class Event {
 
   /**
    * Emits the events
-   * @param  {...any} args Additional arguments provided by Eris
+   * @param  {...any} args Additional arguments provided by Eris or Laffey
    */
   async emit(...args) {
     throw new SyntaxError(`Event ${this.event} didn't override method "emit"`);
