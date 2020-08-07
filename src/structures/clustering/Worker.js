@@ -35,7 +35,7 @@ const { fork } = require('cluster');
  * We use `this#ClusterIPC` to send/receive messages from the master IPC to see if we are ready
  * or not and other stuff. We use `veza` to actually receive messages.
  * 
- * How it works is, it's like we gather shard information from Discord (`ClusterManager#_fetchShards`),
+ * How it works is, it's like we gather shard information from Discord (`ClusterManager#fetchShards`),
  * use the amount of CPU cores we have on this dedicated system (**[os](https://nodejs.org/api/os.html)#cpus**),
  * spawn all instances (**[cluster](https://nodejs.org/api/cluster.html)#fork**)
  */

@@ -25,7 +25,7 @@ const { Logger } = require('../..');
 const { Server } = require('veza');
 
 /**
- * The master IPC is the controller of all IPC connections, used in the main bot instance (`PressFBot#ipc`)
+ * The master IPC is the controller of all IPC connections, used in the main bot instance
  * to request cluster information and other sorts
  */
 module.exports = class MasterIPC {

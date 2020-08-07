@@ -21,6 +21,7 @@
  */
 
 const CommandMessage = require('./Message');
+const TypeReader = require('./arguments/TypeReader');
 const PressFBot = require('./PressFBot');
 const Command = require('./Command');
 const Logger = require('./Logger');

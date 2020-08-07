@@ -78,10 +78,10 @@ module.exports = class Argument {
     if (reader === undefined) return {
       reason: `Invalid type reader "${this.type}"`,
       success: false,
-      values: answers
+      value: undefined
     };
 
-    const valid = await reader.validate(this.message, value);
+    const valid = reader.validate(this.message, value);
     let val;
     let index = 0;
 
@@ -89,7 +89,7 @@ module.exports = class Argument {
       if (index > limit) return {
         success: false,
         reason: 'Reached the max limit of prompts.',
-        values: []
+        value: undefined
       };
 
       const message = await this.message.send([
@@ -101,31 +101,31 @@ module.exports = class Argument {
 
       const res = await this.message.awaitMessage(m => m.author.id === this.message.sender.id);
       if (res) {
-        answers.push(await reader.parse(res.content, this.message));
+        answers.push(reader.parse(res.content, this.message));
         val = res.content;
         await message.delete();
       } else {
         return {
           success: false,
           reason: 'Prompt has timed out.',
-          values: answers
+          value: undefined
         };
       }
 
       if (val.toLowerCase() === 'cancel') return {
         sucess: false,
         reason: `**${this.message.sender.username}#${this.message.sender.discriminator}** has ended this prompt.`,
-        values: answers
+        value: undefined
       };
 
-      valid = await reader.validate(value, this.message);
+      valid = reader.validate(value, this.message);
       index++;
     }
 
     return {
       success: true,
       reason: undefined,
-      values: answers
+      value: reader.parse(value)
     };
   }
 };

@@ -30,5 +30,6 @@ module.exports = {
   UserAgent: `PressFBot (v${version}, https://github.com/auguwu/PressFBot)`,
   version,
   repository: 'https://github.com/auguwu/PressFBot',
-  Color: 0x906FC3
+  Color: 0x906FC3,
+  Support: 'https://discord.gg/yDnbEDH'
 };

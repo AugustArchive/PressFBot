@@ -169,6 +169,20 @@ module.exports = class PressFBot {
     return new EmbedBuilder()
       .setColor(constants.Color);
   }
+
+  /**
+   * Disposes this [PressFBot] instance
+   */
+  async dispose() {
+    this.commands.readers.clear();
+    await this.database.dispose();
+    this.commands.clear();
+    this.events.clear();
+    this.client.disconnect({ reconnect: false });
+    this.redis.disconnect();
+
+    this.logger.warn('Disposed all instances');
+  }
 };
 
 /**
