@@ -38,17 +38,22 @@ module.exports = class MasterIPC {
     this.server = new Server('master');
     this.bot = bot;
 
-    if (isMaster) {
-      this.server.listen(bot.config.ipcPort)
-        .then(x => this.logger.info(`Connected as ${x.name} on port ${bot.config.ipcPort}`))
-        .catch(this.logger.error);
-    }
-
     this.server
       .on('disconnect', () => this.logger.info('Disconnected the IPC service'))
       .on('connect', () => this.logger.info('Connected the IPC service'))
       .on('message', m => this.onMessage.apply(this, [m]))
       .on('error', error => this.logger.error('Unable to connect the IPC service', error));
+  }
+
+  /**
+   * Connects to the IPC server
+   */
+  connect() {
+    if (isMaster) {
+      this.server.listen(bot.config.ipcPort)
+        .then(x => this.logger.info(`Connected as ${x.name} on port ${bot.config.ipcPort}`))
+        .catch(this.logger.error);
+    }
   }
 
   /**

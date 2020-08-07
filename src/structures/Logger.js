@@ -66,7 +66,7 @@ module.exports = class Logger {
     const seconds = escapeTime(now.getHours());
     const day = this.getNumberOrdinal(now.getDate());
 
-    return colors.gray(`[${MONTHS[now.getMonth()]} ${day === null ? now.getDate() : day}, ${now.getFullYear()} | ${hours}:${minutes}:${seconds} ${now.getHours() >= 12 ? 'PM' : 'AM'}`);
+    return colors.gray(`[${MONTHS[now.getMonth()]} ${day === null ? now.getDate() : day}, ${now.getFullYear()} | ${hours}:${minutes}:${seconds} ${now.getHours() >= 12 ? 'PM' : 'AM'}]`);
   }
 
   /**
@@ -84,21 +84,13 @@ module.exports = class Logger {
    */
   _formatMessages(...messages) {
     return messages
-      .map((message) => {
-        if (message instanceof Object) return inspect(message);
-        else if (Array.isArray(message)) return `[${message.join(', ')} (${message.length} items)]`;
-        else if (message instanceof Error) {
-          const a = [`${styles.bold(message.name)}: ${message.message}`];
-          if (message.stack) {
-            const items = message.stack.split('\n');
-            for (const item of items) a.push(item);
-          }
-
-          return a.join('\n');
-        } else {
-          return message;
-        }
-      }).join('\n');
+      .map((message) => 
+        message instanceof Object 
+          ? inspect(message) 
+          : Array.isArray(message) 
+            ? `[${message.join(', ')} (${message.length} items)]` 
+            : message
+      ).join('\n');
   }
 
   /**
@@ -107,16 +99,16 @@ module.exports = class Logger {
    * @param {number} [shardID=0] The shard's ID
    */
   getLevelText(level, shardID) {
-    if (level === 'shard' && !shardID) throw new TypeError('Required "shardID" argument but it wasn\'t received.');
+    if (level === 'shard' && shardID === undefined) throw new TypeError('Required "shardID" argument but it wasn\'t received.');
 
     let lvlText;
     switch (level) {
-      case 'info': lvlText = colors.cyan(`[Info | ${process.pid}]`); break;
-      case 'warn': lvlText = colors.yellow(`[Warning | ${process.pid}]`); break;
+      case 'info': lvlText = hex('#93D3D3', '[Info]'); break;
+      case 'warn': lvlText = hex('#FFFF75', '[Warning]'); break;
       case 'error':
-      case 'fatal': lvlText = colors.red(`[${level === 'error' ? 'Error' : 'Fatal'} | ${process.pid}]`); break;
-      case 'shard': lvlText = hex('#4A4545', `[Shard #${shardID} | ${process.pid}]`); break;
-      case 'database': lvlText = hex('#407294', `[Database | ${process.pid}]`); break;
+      case 'fatal': lvlText = hex('#FF7575', `[${level === 'error' ? 'Error' : 'Fatal'}]`); break;
+      case 'shard': lvlText = hex('#F44C8D', `[Shard #${shardID}]`); break;
+      case 'database': lvlText = hex('#407294', '[Database]'); break;
     }
 
     return lvlText;
@@ -129,9 +121,9 @@ module.exports = class Logger {
    */
   writeShard(shardID, ...messages) {
     const level = this.getLevelText('shard', shardID);
-    const name = hex(NAME_COLOR, `[${this.name}]`);
+    const name = hex(NAME_COLOR, `[${this.title}]`);
 
-    process.stdout.write(`${this.getDate()} ${level} ${name} | ${this._formatMessages(messages)}\n`);
+    process.stdout.write(`${this.getDate()} ${level} ${name} > ${this._formatMessages(...messages)}\n`);
   }
 
   /**
@@ -141,9 +133,10 @@ module.exports = class Logger {
    */
   write(level, ...messages) {
     const lvlText = this.getLevelText(level);
-    const name = hex(NAME_COLOR, `[${this.name}]`);
+    const name = hex(NAME_COLOR, `[${this.title}]`);
+    const message = this._formatMessages(...messages);
 
-    process.stdout.write(`${this.getDate()} ${lvlText} ${name} | ${this._formatMessages(messages)}\n`);
+    process.stdout.write(`${this.getDate()} ${lvlText} ${name} > ${message}\n`);
   }
 
   /**

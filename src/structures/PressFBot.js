@@ -32,6 +32,7 @@ const { Client } = require('eris');
 const { Server } = require('laffey');
 const constants = require('../util/Constants');
 const Logger = require('./Logger');
+const IPC = require('./clustering/ipc/MasterIPC');
 
 module.exports = class PressFBot {
   /**
@@ -65,7 +66,8 @@ module.exports = class PressFBot {
       },
       ipcPort: config.ipc_port,
       owners: config.owners,
-      token: config.token
+      token: config.token,
+      env: config.node_env
     };
 
     /**
@@ -134,6 +136,11 @@ module.exports = class PressFBot {
      * @type {import('ioredis').Redis}
      */
     this.redis = new RedisClient(this.config.redis);
+
+    /**
+     * IPC connections OwO
+     */
+    this.ipc = new IPC(this);
   }
 
   /**
@@ -150,6 +157,8 @@ module.exports = class PressFBot {
     await this.events.load();
 
     this.logger.info('Loaded all miscellaneous stuff, now loading clusters...');
+    
+    this.ipc.connect();
     await this.clusters.spawn();
   }
 
@@ -175,6 +184,7 @@ module.exports = class PressFBot {
  * @prop {number} laffey_port The port to create a new [Laffey] instance
  * @prop {string} redis_host The host to connect to Redis
  * @prop {number} redis_port The port to connect to Redis
+ * @prop {'development' | 'production'} node_env The environment
  * @prop {number} ipc_port The IPC port for IPC conenctions
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
@@ -186,6 +196,7 @@ module.exports = class PressFBot {
  * @prop {number} ipcPort The IPC port for IPC connections
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
+ * @prop {'development' | 'production'} env The environment
  * 
  * @typedef {object} DatabaseConfig
  * @prop {string} username The database username

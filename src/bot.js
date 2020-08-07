@@ -74,6 +74,11 @@ const config = parse({
       type: 'int',
       default: 4200
     },
+    NODE_ENV: {
+      type: 'string',
+      oneOf: ['development', 'production'],
+      default: 'development'
+    },
     OWNERS: {
       type: 'array',
       default: []

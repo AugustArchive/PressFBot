@@ -188,6 +188,57 @@ module.exports = {
     if (kilo < 1024) return `${kilo.toFixed(1)}KB`;
     if (kilo > 1024 && mega < 1024) return `${mega.toFixed(1)}MB`;
     else return `${giga.toFixed(1)}GB`;
+  },
+
+  /**
+   * Creates a chunked array
+   * @template T The result
+   * @param {T[]} entries The entries
+   * @param {number} size The size
+   * @credit [Kurasuta](https://github.com/DevYukine/Kurasuta/blob/master/src/Util/Util.ts)
+   * @returns {T[][]} A new array that has been chunked
+   */
+  chunkArray(entries, size) {
+    const result = [];
+    const amount = Math.floor(entries.length / size);
+    const mod = entries.length % size;
+
+    for (let i = 0; i < size; i++) result[i] = entries.splice(0, i < mod ? amount + 1 : amount);
+    return result;
+  },
+
+  /**
+   * Humanizes a date to a string
+   * @param {number} ms 
+   */
+  humanize(ms) {
+    const months = Math.floor(ms / 1000 / 60 / 60 / 24 / 7 / 12);
+    ms -= months * 1000 * 60 * 60 * 24 * 7 * 12;
+  
+    const weeks = Math.floor(ms / 1000 / 60 / 60 / 24 / 7);
+    ms -= weeks * 1000 * 60 * 60 * 24 * 7;
+  
+    const days = Math.floor(ms / 1000 / 60 / 60 / 24);
+    ms -= days * 1000 * 60 * 60 * 24;
+  
+    const hours = Math.floor(ms / 1000 / 60 / 60);
+    ms -= hours * 1000 * 60 * 60;
+  
+    const mins = Math.floor(ms / 1000 / 60);
+    ms -= mins * 1000 * 60;
+  
+    let humanized = '';
+    const sec = Math.floor(ms / 1000);
+  
+    const addS = (value) => value > 1 ? 's' : '';
+    if (months > 0) humanized += `${months} month${addS(months)}, `;
+    if (weeks > 0) humanized += `${weeks} week${addS(weeks)}, `;
+    if (days > 0) humanized += `${days} day${addS(days)}, `;
+    if (hours > 0) humanized += `${hours} hour${addS(hours)}, `;
+    if (mins > 0) humanized += `${mins} minute${addS(mins)}, `;
+    if (sec > 0) humanized += `${sec} seconds`;
+  
+    return humanized;
   }
 };
 
