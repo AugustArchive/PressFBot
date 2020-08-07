@@ -25,7 +25,7 @@ const UnionTypeReader = require('../../readers/UnionTypeReader');
 const CommandService = require('../services/CommandService');
 const { Collection } = require('@augu/immutable');
 const { getPath } = require('../../util');
-const { Logger } = require('..');
+const Logger = require('../Logger');
 const { join } = require('path');
 
 /**
@@ -89,13 +89,16 @@ module.exports = class CommandManager extends Collection {
     }
 
     for (const file of files) {
-      const command = await import(join(this.path, file));
+      const modules = await fs.readdir(join(this.path, file));
+      modules.forEach(mod => {
+        const command = require(join(this.path, file, mod));
 
-      /** @type {import('../Command')} */
-      const cmd = new command();
-      cmd.init(this.bot);
-
-      this.set(cmd.name, cmd);
+        /** @type {import('../Command')} */
+        const cmd = new command();
+        cmd.init(this.bot);
+  
+        this.set(cmd.name, cmd);
+      });
     }
 
     const readersDir = getPath('readers');
@@ -111,8 +114,8 @@ module.exports = class CommandManager extends Collection {
       process.emit('SIGINT');
     }
 
-    for (const typeReader of readersArray.filter(s => ['UnionTypeReader.js'].includes(s))) {
-      const TypeReader = await import(join(readersDir, typeReader));
+    for (const typeReader of readersArray.filter(s => !['UnionTypeReader.js'].includes(s))) {
+      const TypeReader = require(join(readersDir, typeReader));
 
       /** @type {import('../arguments/TypeReader')} */
       const reader = new TypeReader();

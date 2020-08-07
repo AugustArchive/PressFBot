@@ -21,8 +21,8 @@
  */
 
 const { isMaster } = require('cluster');
-const { Logger } = require('../..');
 const { Server } = require('veza');
+const Logger = require('../../Logger');
 
 /**
  * The master IPC is the controller of all IPC connections, used in the main bot instance
@@ -50,7 +50,7 @@ module.exports = class MasterIPC {
    */
   connect() {
     if (isMaster) {
-      this.server.listen(bot.config.ipcPort)
+      this.server.listen(this.bot.config.ipcPort)
         .then(x => this.logger.info(`Connected as ${x.name} on port ${bot.config.ipcPort}`))
         .catch(this.logger.error);
     }

@@ -25,7 +25,7 @@ const { version, repository } = require('../../util/Constants');
 const { Collection } = require('@augu/immutable');
 const { chunkArray } = require('../../util');
 const { isMaster } = require('cluster');
-const { Logger } = require('..');
+const Logger = require('../Logger');
 const Worker = require('../clustering/Worker');
 
 /**
@@ -86,7 +86,7 @@ module.exports = class ClusteringManager {
       this.http.use(middleware.logging({
         binding: (_, __, message) => message,
         useConsole: false,
-        caller: (level, message) => this.logger[level](message)
+        caller: (level, message) => this.logger[level].apply(this.logger, [message])
       }));
     }
   }

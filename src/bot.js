@@ -27,7 +27,7 @@ const { parse } = require('@augu/dotenv');
 const { join } = require('path');
 
 const logger = new Logger('Master');
-if (!isNode10(process.version)) {
+if (!isNode10()) {
   logger.fatal(`Sorry but version ${logger.styles.bold(process.version)} is not an avaliable version to run PressFBot. Please update your Node.js installation to v10 or higher.`);
   process.exit(1);
 }
@@ -46,7 +46,7 @@ const config = parse({
     DATABASE_PASSWORD: 'string',
     REDIS_PASSWORD: {
       type: 'string',
-      default: null
+      default: undefined
     },
     DATABASE_HOST: 'string',
     DATABASE_PORT: 'int',
@@ -73,6 +73,10 @@ const config = parse({
     LAFFEY_PORT: {
       type: 'int',
       default: 4200
+    },
+    LAFFEY_ENABLED: {
+      type: 'boolean',
+      default: false
     },
     NODE_ENV: {
       type: 'string',

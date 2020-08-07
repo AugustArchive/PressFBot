@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { TypeReader } = require('../structures');
+const TypeReader = require('../structures/arguments/TypeReader');
 const { rgbToInt } = require('../util');
 
 /**

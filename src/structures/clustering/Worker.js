@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-const { Logger } = require('..');
 const WorkerIPC = require('./ipc/WorkerIPC');
 const { sleep } = require('../../util');
 const { fork } = require('cluster');
+const Logger = require('../Logger');
 
 /**
  * Represents a cluster [worker], which is basically

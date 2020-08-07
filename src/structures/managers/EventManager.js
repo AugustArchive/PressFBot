@@ -23,7 +23,7 @@
 const { promises: fs } = require('fs');
 const { Collection } = require('@augu/immutable');
 const { getPath } = require('../../util');
-const { Logger } = require('..');
+const Logger = require('../Logger');
 const { join } = require('path');
 
 /**
@@ -75,7 +75,7 @@ module.exports = class EventsManager extends Collection {
     }
 
     for (const file of files) {
-      const Event = await import(join(this.path, file));
+      const Event = require(join(this.path, file));
 
       /** @type {import('../Event')} */
       const event = new Event();

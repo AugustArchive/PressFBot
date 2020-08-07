@@ -21,7 +21,7 @@
  */
 
 const { Dialect, pipelines } = require('@augu/maru');
-const { Logger } = require('..');
+const Logger = require('../Logger');
 
 /**
  * Represents a [DatabaseManager], which handles database
@@ -84,7 +84,6 @@ module.exports = class DatabaseManager {
       }
     }), false);
 
-    console.log(query);
     this.logger.info('Created tables if they didn\'t exist!');
   }
 

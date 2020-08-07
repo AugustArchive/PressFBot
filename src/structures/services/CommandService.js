@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { CommandMessage } = require('..');
+const CommandMessage = require('../Message');
 const { Support } = require('../../util/Constants');
 const Argument = require('../arguments/Argument');
 

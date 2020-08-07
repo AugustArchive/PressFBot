@@ -40,7 +40,7 @@ module.exports = class PressFBot {
    * @param {EnvConfig} config The configuration
    */
   constructor(config) {
-    if (this.config.laffey.enabled && this.config.laffey.secret === undefined) throw new TypeError('Missing "LAFFEY_SECRET" in .env');
+    if (config.laffey_enabled && config.laffey_secret === undefined) throw new TypeError('Missing "LAFFEY_SECRET" in .env');
 
     /**
      * The configuration

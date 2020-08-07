@@ -143,7 +143,10 @@ module.exports = {
    * @param {...string} paths The paths to conjoin
    * @returns {string} The paths conjoined 
    */
-  getPath: (...paths) => `${process.cwd()}${this.sep}${paths.join(this.sep)}`,
+  getPath(...paths) {
+    const sep = process.platform === 'win32' ? '\\' : '/';
+    return `${process.cwd()}${sep}${paths.join(sep)}`;
+  },
 
   /**
    * Returns the seperator for Windows/Unix systems

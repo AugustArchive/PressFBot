@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { TypeReader } = require('../structures');
+const TypeReader = require('../structures/arguments/TypeReader');
 
 /**
  * Represents a [StringTypeReader], which basically

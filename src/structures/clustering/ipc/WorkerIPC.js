@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-const { Logger } = require('../..');
 const { Client } = require('veza');
+const Logger = require('../../Logger');
 
 /**
  * Represents an IPC connection with this cluster,
