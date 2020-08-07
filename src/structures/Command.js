@@ -84,14 +84,7 @@ module.exports = class Command {
    * Format the command's usage
    */
   format() {
-    const usage = this.args.length ? this.args.map(arg => {
-      const prefix = arg.required ? '<' : '[';
-      const suffix = arg.required ? '>' : ']';
-
-      return `${prefix}${arg.label}${suffix}`;
-    }) : '';
-
-    return `${this.bot.config.prefix}${this.name}${usage === '' ? '' : ` ${usage}`}`;
+    return `${this.bot.config.prefix}${this.name}${this.usage === '' ? '' : ` ${this.usage}`}`;
   }
 };
 
@@ -100,6 +93,6 @@ module.exports = class Command {
  * @prop {string} description The description of the command
  * @prop {boolean} [ownerOnly=false] If this command should be ran by the owners
  * @prop {string[]} [aliases=[]] The command's external names
- * @prop {import('./arguments/Argument').ArgumentInfo[]} [args=[]] The command's external arguments
+ * @prop {string} [usage=''] The command's usage
  * @prop {string} name The command's name
  */

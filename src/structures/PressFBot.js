@@ -21,7 +21,6 @@
  */
 
 const CommandStatisticsManager = require('./managers/CommandStatisticsManager');
-const ClusteringManager = require('./managers/ClusteringManager');
 const TimeoutsManager = require('./managers/TimeoutsManager');
 const DatabaseManager = require('./managers/DatabaseManager');
 const CommandManager = require('./managers/CommandManager');
@@ -32,7 +31,6 @@ const { Client } = require('eris');
 const { Server } = require('laffey');
 const constants = require('../util/Constants');
 const Logger = require('./Logger');
-const IPC = require('./clustering/ipc/MasterIPC');
 
 module.exports = class PressFBot {
   /**
@@ -64,7 +62,6 @@ module.exports = class PressFBot {
         secret: config.laffey_secret,
         port: config.laffey_port
       },
-      ipcPort: config.ipc_port,
       owners: config.owners,
       token: config.token,
       env: config.node_env
@@ -75,13 +72,7 @@ module.exports = class PressFBot {
      * @type {CommandStatisticsManager}
      */
     this.statistics = new CommandStatisticsManager();
-
-    /**
-     * Manages all clusters
-     * @type {ClusteringManager}
-     */
-    this.clusters = new ClusteringManager(this);
-
+    
     /**
      * Manages all timeouts for votes
      * @type {TimeoutsManager}
@@ -119,8 +110,7 @@ module.exports = class PressFBot {
     this.client = new Client(config.token, {
       getAllUsers: true,
       maxShards: 'auto',
-      restMode: true,
-      intents: ['guilds', 'guildMessages', 'guildMembers']
+      restMode: true
     });
 
     /**
@@ -136,11 +126,6 @@ module.exports = class PressFBot {
      * @type {import('ioredis').Redis}
      */
     this.redis = new RedisClient(this.config.redis);
-
-    /**
-     * IPC connections OwO
-     */
-    this.ipc = new IPC(this);
   }
 
   /**
@@ -156,30 +141,28 @@ module.exports = class PressFBot {
     await this.commands.load();
     await this.events.load();
 
-    this.logger.info('Loaded all miscellaneous stuff, now loading clusters...');
-    
-    this.ipc.connect();
-    await this.clusters.spawn();
+    this.logger.info('Loaded all miscellaneous stuff');
+    await this.client.connect()
+      .then(() => this.logger.info('Now connecting through tubes with Discord O_o'))
+      .catch(() => {
+        this.logger.error('Unable to connect to Discord');
+        process.exit(1);
+      });
   }
 
   /**
    * Returns a new [EmbedBuilder]
    * @param {string} id The user's ID (if specified)
    */
-  async getEmbed(id) {
-    if (!id) return new EmbedBuilder().setColor(constants.Color);
-    else {
-      const { color } = await this.database.getUser(id);
-      return new EmbedBuilder()
-        .setColor(color);
-    }
+  getEmbed() {
+    return new EmbedBuilder()
+      .setColor(constants.Color);
   }
 
   /**
    * Disposes this [PressFBot] instance
    */
   async dispose() {
-    this.commands.readers.clear();
     await this.database.dispose();
     this.commands.clear();
     this.events.clear();
@@ -204,7 +187,6 @@ module.exports = class PressFBot {
  * @prop {string} redis_host The host to connect to Redis
  * @prop {number} redis_port The port to connect to Redis
  * @prop {'development' | 'production'} node_env The environment
- * @prop {number} ipc_port The IPC port for IPC conenctions
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
  * 
@@ -212,7 +194,6 @@ module.exports = class PressFBot {
  * @prop {DatabaseConfig} database The database configuration
  * @prop {LaffeyConfig} laffey The [Laffey] configuration
  * @prop {RedisConfig} redis The redis configuration
- * @prop {number} ipcPort The IPC port for IPC connections
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
  * @prop {'development' | 'production'} env The environment

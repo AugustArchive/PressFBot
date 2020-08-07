@@ -22,7 +22,6 @@
 
 const CommandMessage = require('../Message');
 const { Support } = require('../../util/Constants');
-const Argument = require('../arguments/Argument');
 
 /**
  * Represents a service for running commands
@@ -63,7 +62,7 @@ module.exports = class CommandService {
     }
 
     let prefix = null;
-    const mention = new RegExp(`^<@!?${this.bot.client.user.id}> `).exec(m.content);
+    const mention = new RegExp(`^<@!?${this.bot.client.user.id}> `).exec(msg.content);
     const prefixes = [
       'F_',
       'f ',
@@ -71,7 +70,7 @@ module.exports = class CommandService {
     ].filter(Boolean);
     if (mention !== null) prefixes.push(`${mention}`);
 
-    for (const pre of prefixes) if (m.content.startsWith(pre)) prefix = pre;
+    for (const pre of prefixes) if (msg.content.startsWith(pre)) prefix = pre;
     if (prefix === null) return;
 
     const args = msg.content.slice(prefix.length).split(/ +/g);
@@ -80,34 +79,17 @@ module.exports = class CommandService {
       cmd.name === commandName || cmd.aliases.includes(cmd)  
     );
 
-    const ctx = new CommandMessage(this.bot, msg);
+    const ctx = new CommandMessage(this.bot, msg, args);
 
     if (commands.length > 0) {
       const command = commands[0];
       if (command.ownerOnly && !this.bot.config.owners.includes(msg.author.bot)) return;
 
-      // handle arguments oWo
-      const allArgs = [];
-
-      if (command.args.length) {
-        const argMap = command.args.map(arg => new Argument(ctx, arg));
-
-        for (let i = 0; i < args.length; i++) {
-          const argument = argMap[i];
-          if (argument.required && args.length < i) return ctx.send(`Missing the "${argument.label}" argument.\n> Usage: **${command.format()}**`);
-        
-          const { reason, success, value } = argument.parse(args[i], args.length);
-          if (!success) return ctx.send(reason);
-
-          allArgs.push(value);
-        }
-      }
-
       try {
-        await command.run(ctx, ...allArgs);
+        await command.run(ctx);
         this.bot.statistics.inc(command);
       } catch(ex) {
-        const embed = await this.bot.getEmbed(ctx.sender.id)
+        const embed = this.bot.getEmbed()
           .setTitle(`[ Command ${command.name} failed ]`)
           .setDescription([
             `If this command keeps failing, report it to <@280158289667555328> at <${Support}>`,

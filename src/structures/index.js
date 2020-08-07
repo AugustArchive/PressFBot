@@ -21,10 +21,9 @@
  */
 
 const CommandMessage = require('./Message');
-const TypeReader = require('./arguments/TypeReader');
 const PressFBot = require('./PressFBot');
 const Command = require('./Command');
 const Logger = require('./Logger');
 const Event = require('./Event');
 
-module.exports = { CommandMessage, TypeReader, PressFBot, Command, Logger, Event };
+module.exports = { CommandMessage, PressFBot, Command, Logger, Event };

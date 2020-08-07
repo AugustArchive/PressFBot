@@ -21,7 +21,6 @@
  */
 
 const { promises: fs } = require('fs');
-const UnionTypeReader = require('../../readers/UnionTypeReader');
 const CommandService = require('../services/CommandService');
 const { Collection } = require('@augu/immutable');
 const { getPath } = require('../../util');
@@ -39,12 +38,6 @@ module.exports = class CommandManager extends Collection {
    */
   constructor(bot) {
     super();
-
-    /**
-     * List of type readers avaliable
-     * @type {Collection<import('../arguments/TypeReader')>}
-     */
-    this.readers = new Collection();
 
     /**
      * Service for handling all command executions
@@ -99,27 +92,6 @@ module.exports = class CommandManager extends Collection {
   
         this.set(cmd.name, cmd);
       });
-    }
-
-    const readersDir = getPath('readers');
-    const stats2 = await fs.lstat(readersDir);
-    if (!stats2.isDirectory()) {
-      this.logger.error(`Path "${readersDir}" is not a directory, did you clone the wrong commit?`);
-      process.emit('SIGINT');
-    }
-
-    const readersArray = await fs.readdir(readersDir);
-    if (!readersArray.length) {
-      this.logger.error(`Path "${this.path}" doesn't include any commands, did you clone the wrong commit?`);
-      process.emit('SIGINT');
-    }
-
-    for (const typeReader of readersArray.filter(s => !['UnionTypeReader.js'].includes(s))) {
-      const TypeReader = require(join(readersDir, typeReader));
-
-      /** @type {import('../arguments/TypeReader')} */
-      const reader = new TypeReader();
-      this.readers.set(reader.id, reader);
     }
   }
 

@@ -64,7 +64,7 @@ module.exports = class DatabaseManager {
     await this.connection.connect();
 
     this.logger.info('We are connected to PostgreSQL! Now creating tables (if they do not exist)');
-    const query = this.connection.query(pipelines.CreateTable('users', {
+    await this.connection.query(pipelines.CreateTable('users', {
       values: {
         voted: {
           nullable: false,
@@ -84,7 +84,34 @@ module.exports = class DatabaseManager {
       }
     }), false);
 
+    await this.connection.query(pipelines.CreateTable('guilds', {
+      values: {
+        legacy: {
+          nullable: false,
+          primary: false,
+          type: 'string'
+        },
+        id: {
+          nullable: false,
+          primary: true,
+          type: 'string'
+        }
+      }
+    }), false);
+
     this.logger.info('Created tables if they didn\'t exist!');
+  }
+
+  /**
+   * Disposes this instance
+   */
+  async dispose() {
+    if (!this.connected) {
+      this.logger.warn('Not even connected?');
+      return;
+    }
+
+    await this.dialect.destroy();
   }
 
   /**
@@ -104,7 +131,6 @@ module.exports = class DatabaseManager {
     return this.connection.query(pipelines.Insert({
       values: {
         voted: false,
-        times: 0,
         id
       },
       table: 'users'

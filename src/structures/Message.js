@@ -21,6 +21,7 @@
  */
 
 const MessageCollector = require('./MessageCollector');
+const ArgumentParser = require('./parsers/ArgumentParser');
 const { unembedify } = require('../util');
 const EmbedBuilder = require('./EmbedBuilder');
 
@@ -45,8 +46,9 @@ module.exports = class CommandMessage {
    * Creates a new [CommandMessage] class.
    * @param {import('./PressFBot')} bot The bot instance
    * @param {import('eris').Message<import('eris').TextChannel>} msg The message
+   * @param {string[]} args The arguments provided by da user UwU
    */
-  constructor(bot, msg) {
+  constructor(bot, msg, args) {
     /**
      * The message collector for [CommandMessage.awaitMessage]
      * @type {import('./MessageCollector')}
@@ -62,6 +64,12 @@ module.exports = class CommandMessage {
      * @type {import('eris').Message<import('eris').TextChannel>}
      */
     this.message = msg;
+
+    /**
+     * Argument parser OwO
+     * @type {ArgumentParser}
+     */
+    this.args = new ArgumentParser(args);
 
     /**
      * The bot instance
