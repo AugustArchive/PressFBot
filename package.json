@@ -16,6 +16,7 @@
     "@augu/orchid": "1.4.0",
     "common-tags": "1.8.0",
     "eris": "0.13.3",
+    "ioredis": "4.17.3",
     "laffey": "1.0.0",
     "leeks.js": "0.0.8",
     "veza": "1.1.0"
