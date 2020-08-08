@@ -101,9 +101,9 @@ bot.start()
 
 process.on('uncaughtException', (error) => logger.error('Received an uncaught exception:', error));
 process.on('unhandledRejection', (error) => logger.error('Received an unhandled Promise rejection:', error));
-process.on('SIGINT', () => {
+process.on('SIGINT', async() => {
   logger.warn('Disposing PressFBot...');
-  bot.dispose();
+  await bot.dispose();
 
   process.exit(1);
 });
