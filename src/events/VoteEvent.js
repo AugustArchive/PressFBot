@@ -39,6 +39,7 @@ module.exports = class VoteEvent extends Event {
     this.bot.logger.info(`User ${user.username}#${user.discriminator} has voted for PressFBot, now at ${this.bot.webhook.requests.toLocaleString()} requests received`);
     await this.bot.database.setVote(user.id, true);
     await this.bot.timeouts.apply(user.id);
+    await this.bot.database.incrementTimes(user.id);
 
     const u = this.bot.client.users.get(user.id);
     if (!u) return;

@@ -38,7 +38,7 @@ module.exports = class LegacyCommand extends Command {
    */
   async run(ctx) {
     const settings = await this.bot.database.getGuild(ctx.guild.id);
-    const bool = settings.legacy === 'true' ? 'false' : 'true';
+    const bool = !settings.legacy;
 
     const { legacy: enabled } = await this.bot.database.connection.query(pipelines.Update({
       returning: ['legacy'],
@@ -48,8 +48,8 @@ module.exports = class LegacyCommand extends Command {
       type: 'set'
     }));
 
-    const emote = enabled === 'true' ? ':white_check_mark:' : ':question:';
+    const emote = enabled ? ':white_check_mark:' : ':question:';
 
-    return ctx.send(`${emote} **Legacy mode is ${enabled === 'true' ? 'enabled' : 'disabled'}**`);
+    return ctx.send(`${emote} **Legacy mode is ${enabled ? 'enabled' : 'disabled'}**`);
   }
 };

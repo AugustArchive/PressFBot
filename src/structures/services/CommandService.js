@@ -62,7 +62,7 @@ module.exports = class CommandService {
 
     if (msg.content === 'f' || msg.content === 'F' || msg.content === '01000110') {
       const random = Math.random();
-      if (!user.voted && guild.legacy === 'false' && random <= 0.3) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
+      if (!user.voted && !guild.legacy && random <= 0.3) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
       return msg.channel.createMessage({
         content: `**${msg.member ? msg.member.nick ? msg.member.nick : msg.author.username : msg.author.username}** has paid their respect. :hibiscus:`,
         allowedMentions: {
