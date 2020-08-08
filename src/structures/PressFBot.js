@@ -128,7 +128,7 @@ module.exports = class PressFBot {
 
     /**
      * The webhook service (provided by [Laffey])
-     * @type {import('laffey').laffey.Server}
+     * @type {import('laffey').Server}
      */
     this.webhook = this.config.laffey.enabled ? new Server(this.config.laffey.port, '/webhook', {
       token: this.config.laffey.secret
@@ -190,6 +190,8 @@ module.exports = class PressFBot {
    * Disposes this [PressFBot] instance
    */
   async dispose() {
+    if (this.webhook !== undefined) this.webhook.close();
+    
     await this.database.dispose();
     this.commands.clear();
     this.events.clear();

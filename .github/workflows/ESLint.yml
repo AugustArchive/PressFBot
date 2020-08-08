@@ -9,6 +9,15 @@ on:
         - '*.md'
         - 'LICENSE'
         - '.gitignore'
+  pull_request:
+    branches:
+      - 'master'
+    paths-ignore:
+        - '.github/**'
+        - '.vscode/**'
+        - '*.md'
+        - 'LICENSE'
+        - '.gitignore'
 jobs:
   lint:
     runs-on: ubuntu-latest

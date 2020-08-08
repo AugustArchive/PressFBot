@@ -55,7 +55,7 @@ module.exports = class CommandStatisticsManager {
     if (!this.commandUsages.hasOwnProperty(cmd.name)) this.commandUsages[cmd.name] = 0;
 
     this.commandsExecuted++;
-    this.commandUsages[cmd.name] = this.commandUsages[cmd.name]++;
+    this.commandUsages[cmd.name] = (this.commandUsages[cmd.name] || 0) + 1;
   }
 
   /**
