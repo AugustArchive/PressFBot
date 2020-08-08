@@ -103,7 +103,19 @@ bot.start()
     process.exit(1);
   });
 
-process.on('uncaughtException', (error) => logger.error('Received an uncaught exception:', error));
+process.on('uncaughtException', async(error) => {
+  logger.error('Received an uncaught exception:', error);
+
+  // fuck eris man istg
+  if (error.message.includes('by peer')) {
+    logger.info('Restarting PressFBot...');
+    bot.client.disconnect({ reconnect: false });
+    await bot.client.connect()
+      .then(() => logger.info('Reconnecting through tubes...'))
+      .catch(logger.error);
+  }
+});
+
 process.on('unhandledRejection', (error) => logger.error('Received an unhandled Promise rejection:', error));
 process.on('SIGINT', () => {
   logger.warn('Disposing PressFBot...');
