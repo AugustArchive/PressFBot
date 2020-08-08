@@ -51,7 +51,7 @@ module.exports = class TimeoutsManager {
       setTimeout(async() => {
         const exists = await this.bot.redis.hexists('timeouts', id);
         if (exists) {
-          await this.bot.redis.hdel('timeouts', date);
+          await this.bot.redis.hdel('timeouts', id);
           await this.bot.database.setVote(value.split(':')[0], false);
         }
       }, start - (Date.now() + Day));

@@ -71,6 +71,11 @@ module.exports = class DatabaseManager {
           primary: false,
           type: 'boolean'
         },
+        times: {
+          nullable: false,
+          primary: false,
+          type: 'number'
+        },
         id: {
           nullable: false,
           primary: true,
@@ -84,7 +89,7 @@ module.exports = class DatabaseManager {
         legacy: {
           nullable: false,
           primary: false,
-          type: 'string'
+          type: 'boolean'
         },
         id: {
           nullable: false,
@@ -93,7 +98,7 @@ module.exports = class DatabaseManager {
         }
       }
     }), false);
-
+    
     this.logger.info('Created tables if they didn\'t exist!');
   }
 
