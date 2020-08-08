@@ -37,6 +37,8 @@ module.exports = class LegacyCommand extends Command {
    * @param {import('../../structures/Message')} ctx The command's context
    */
   async run(ctx) {
+    if (!ctx.member.permission.has('manageGuild')) return ctx.send('You are missing the **Manage Server** permission');
+
     const settings = await this.bot.database.getGuild(ctx.guild.id);
     const bool = !settings.legacy;
 
@@ -49,7 +51,6 @@ module.exports = class LegacyCommand extends Command {
     }));
 
     const emote = enabled ? ':white_check_mark:' : ':question:';
-
     return ctx.send(`${emote} **Legacy mode is ${enabled ? 'enabled' : 'disabled'}**`);
   }
 };
