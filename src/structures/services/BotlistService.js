@@ -108,7 +108,7 @@ module.exports = class BotlistService {
 
           const data = res.json();
           const level = res.statusCode === 200 ? 'info' : 'warn';
-          this.logger[level].apply(this.level, [`Made a request (${res.statusCode}): ${data}`]);
+          this.logger[level].apply(this.logger, [`Made a request (${res.statusCode}): ${data}`]);
         } catch(ex) {
           this.logger.error('Unable to post to discord.boats:', ex);
         }
