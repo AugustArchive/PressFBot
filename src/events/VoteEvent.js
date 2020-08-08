@@ -59,7 +59,7 @@ module.exports = class VoteEvent extends Event {
 
     try {
       const channel = await u.getDMChannel();
-      const embed = this.bot.getEmbed(u.id);
+      const embed = this.bot.getEmbed();
 
       embed
         .setTitle('[ Thanks for voting! ]')
