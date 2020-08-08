@@ -10,7 +10,7 @@ on:
         - 'LICENSE'
         - '.gitignore'
 jobs:
-  deploy:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
