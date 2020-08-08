@@ -33,7 +33,7 @@ module.exports = class ReadyEvent extends Event {
   async emit() {
     this.bot.logger.info(`Connected to Discord as ${this.bot.client.user.username}#${this.bot.client.user.discriminator} with ${this.bot.client.guilds.size} guilds!`);
     this.bot.client.editStatus('online', {
-      name: 'f in chat',
+      name: `f in chat in ${this.bot.client.guilds.size.toLocaleString()} guilds`,
       type: 2
     });
 
