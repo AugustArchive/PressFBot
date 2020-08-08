@@ -1,0 +1,38 @@
+name: Deploy to server
+on:
+  push:
+    branches:
+      - 'master'
+    paths-ignore:
+        - '.github/**'
+        - '.vscode/**'
+        - '*.md'
+        - 'LICENSE'
+        - '.gitignore'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js v13.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 13.x
+      - name: Install global packages
+        run: npm i -g eslint
+      - name: Lint the repository
+        run: eslint src --ext .js --fix
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          port: 22
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd ~/pressfbot
+            git pull
+            rm -fr node_modules
+            rm yarn.lock
+            yarn
+            pm2 restart pressfbot
