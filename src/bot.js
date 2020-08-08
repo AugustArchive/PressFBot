@@ -66,6 +66,10 @@ const config = parse({
       type: 'int',
       default: 6379
     },
+    VOTE_LOGS_URL: {
+      type: 'string',
+      default: null
+    },
     LAFFEY_PORT: {
       type: 'int',
       default: 4200

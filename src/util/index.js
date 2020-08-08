@@ -33,8 +33,6 @@ module.exports = {
    * @returns {string} A string of the hash or `null` if it can't find the .git folder
    */
   getCommitHash: () => {
-    if (!existsSync(join(__dirname, '..', '.git'))) return null;
-
     const hash = execSync('git rev-parse HEAD', { encoding: 'utf8' });
     return hash.slice(0, 8);
   },

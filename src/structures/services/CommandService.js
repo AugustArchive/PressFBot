@@ -54,11 +54,23 @@ module.exports = class CommandService {
       user = await this.bot.database.getUser(msg.author.id);
     }
 
+    let guild = await this.bot.database.getGuild(msg.channel.guild.id);
+    if (guild === null) {
+      await this.bot.database.createGuild(msg.channel.guild.id);
+      guild = await this.bot.database.getGuild(msg.channel.guild.id);
+    }
+
     if (msg.content === 'f' || msg.content === 'F' || msg.content === '01000110') {
-      // TODO: implement legacy shit
       const random = Math.random();
-      if (!user.voted && random >= 0.9) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
-      return msg.channel.createMessage(`**${msg.member ? msg.member.nick ? msg.member.nick : msg.author.username : msg.author.username}** has paid their respect. :hibiscus:`);
+      if (!user.voted && guild.legacy === 'false' && random <= 0.3) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
+      return msg.channel.createMessage({
+        content: `**${msg.member ? msg.member.nick ? msg.member.nick : msg.author.username : msg.author.username}** has paid their respect. :hibiscus:`,
+        allowedMentions: {
+          everyone: false,
+          roles: false,
+          users: false
+        }
+      });
     }
 
     let prefix = null;
@@ -83,7 +95,7 @@ module.exports = class CommandService {
 
     if (commands.length > 0) {
       const command = commands[0];
-      if (command.ownerOnly && !this.bot.config.owners.includes(msg.author.bot)) return;
+      if (command.ownerOnly && !this.bot.config.owners.includes(msg.author.id)) return;
 
       try {
         await command.run(ctx);

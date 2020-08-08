@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-const { Event } = require('../structures');
 const { Support } = require('../util/Constants');
+const { Event } = require('../structures');
 
 module.exports = class VoteEvent extends Event {
   constructor() {
@@ -43,16 +43,29 @@ module.exports = class VoteEvent extends Event {
     const u = this.bot.client.users.get(user.id);
     if (!u) return;
 
+    const votes = await this.bot.redis.hkeys('timeouts');
+    const embed = this.bot.getEmbed()
+      .setAuthor(`[ ${user.username}#${user.discriminator} | Voted for ${bot.name} ]`, bot.url, bot.avatar)
+      .setDescription([
+        `:pencil2: **Now at ${votes.length} votes and ${this.bot.webhook.requests.toLocaleString()} requests received!**`
+      ].join('\n'));
+
+    if (this.bot.config.voteLogUrl !== null) await this.bot.http.request({
+      method: 'POST',
+      url: `${this.bot.config.voteLogUrl}?wait=true`,
+      data: { embeds: [embed.build()] }
+    });
+
     try {
       const channel = await u.getDMChannel();
-      const embed = await this.bot.getEmbed(u.id);
+      const embed = this.bot.getEmbed(u.id);
 
       embed
         .setTitle('[ Thanks for voting! ]')
         .setDescription([
-          '> :hibiscus: **| Enjoy your perks! It\'s not much, but it helps in the long run.**',
-          '',
+          ':hibiscus: **| Enjoy your perks! It\'s not much, but it helps in the long run.**',
           ':question: **| Want to suggest more perks? Join the support server and send some to the owner!**',
+          '',
           Support
         ]);
 

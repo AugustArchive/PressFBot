@@ -49,6 +49,18 @@ module.exports = class Command {
     this.aliases = info.hasOwnProperty('aliases') ? info.aliases : [];
 
     /**
+     * The command's category
+     * @type {'Core' | 'System' | 'Settings'}
+     */
+    this.category = info.hasOwnProperty('category') ? info.category : 'Core';
+
+    /**
+     * The command's usage
+     * @type {string}
+     */
+    this.usage = info.hasOwnProperty('usage') ? info.usage : '';
+
+    /**
      * The command's external arguments
      * @type {import('./arguments/Argument').ArgumentInfo[]}
      */
@@ -84,7 +96,7 @@ module.exports = class Command {
    * Format the command's usage
    */
   format() {
-    return `${this.bot.config.prefix}${this.name}${this.usage === '' ? '' : ` ${this.usage}`}`;
+    return `F ${this.name}${this.usage === '' ? '' : ` ${this.usage}`}`;
   }
 };
 
@@ -92,6 +104,7 @@ module.exports = class Command {
  * @typedef {object} CommandInfo Represents information to pass in for [Command]
  * @prop {string} description The description of the command
  * @prop {boolean} [ownerOnly=false] If this command should be ran by the owners
+ * @prop {'Core' | 'Settings' | 'System'} [category='Core'] The command's category
  * @prop {string[]} [aliases=[]] The command's external names
  * @prop {string} [usage=''] The command's usage
  * @prop {string} name The command's name

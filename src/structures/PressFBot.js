@@ -24,7 +24,9 @@ const CommandStatisticsManager = require('./managers/CommandStatisticsManager');
 const TimeoutsManager = require('./managers/TimeoutsManager');
 const DatabaseManager = require('./managers/DatabaseManager');
 const CommandManager = require('./managers/CommandManager');
+const { HttpClient } = require('@augu/orchid');
 const EventsManager = require('./managers/EventManager');
+const { UserAgent } = require('../util/Constants');
 const EmbedBuilder = require('./EmbedBuilder');
 const RedisClient = require('ioredis');
 const { Client } = require('eris');
@@ -62,6 +64,7 @@ module.exports = class PressFBot {
         secret: config.laffey_secret,
         port: config.laffey_port
       },
+      voteLogUrl: config.vote_logs_url,
       owners: config.owners,
       token: config.token,
       env: config.node_env
@@ -117,7 +120,7 @@ module.exports = class PressFBot {
      * The webhook service (provided by [Laffey])
      * @type {import('laffey').laffey.Server}
      */
-    this.webhook = this.config.laffey.enabled ? new Server(this.config.laffey.port, '/', {
+    this.webhook = this.config.laffey.enabled ? new Server(this.config.laffey.port, '/webhook', {
       token: this.config.laffey.secret
     }) : undefined;
 
@@ -126,6 +129,18 @@ module.exports = class PressFBot {
      * @type {import('ioredis').Redis}
      */
     this.redis = new RedisClient(this.config.redis);
+
+    /**
+     * Orchid instance OwO
+     * @type {HttpClient}
+     */
+    this.http = new HttpClient({
+      defaults: {
+        headers: {
+          'User-Agent': UserAgent
+        }
+      }
+    });
   }
 
   /**
@@ -142,6 +157,8 @@ module.exports = class PressFBot {
     await this.events.load();
 
     this.logger.info('Loaded all miscellaneous stuff');
+    if (this.webhook !== undefined) this.webhook.listen();
+
     await this.client.connect()
       .then(() => this.logger.info('Now connecting through tubes with Discord O_o'))
       .catch(() => {
@@ -179,6 +196,7 @@ module.exports = class PressFBot {
  * @prop {string} database_password The database password
  * @prop {string} [redis_password] The password (optional) to connect to Redis
  * @prop {boolean} laffey_enabled If we should use [Laffey] or not
+ * @prop {string} vote_logs_url The vote logs url
  * @prop {string} database_host The database host
  * @prop {number} database_port The database port
  * @prop {string} database_name The database's name
@@ -192,6 +210,7 @@ module.exports = class PressFBot {
  * 
  * @typedef {object} Configuration
  * @prop {DatabaseConfig} database The database configuration
+ * @prop {string} voteLogUrl The vote logs url
  * @prop {LaffeyConfig} laffey The [Laffey] configuration
  * @prop {RedisConfig} redis The redis configuration
  * @prop {string[]} owners The owners of the bot

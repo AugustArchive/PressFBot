@@ -71,11 +71,6 @@ module.exports = class DatabaseManager {
           primary: false,
           type: 'boolean'
         },
-        times: {
-          nullable: false,
-          primary: false,
-          type: 'number'
-        },
         id: {
           nullable: false,
           primary: true,
@@ -155,7 +150,7 @@ module.exports = class DatabaseManager {
    * Increments the `times` attribute
    * @param {string} id The user's ID
    */
-  async incrementTime(id) {
+  async incrementTimes(id) {
     const user = await this.getUser(id);
     let times = 0;
 
@@ -175,6 +170,29 @@ module.exports = class DatabaseManager {
       type: 'set'
     }), false);
   }
+
+  /**
+   * Gets a guild
+   * @param {string} id The guild's ID
+   * @returns {Promise<Guild | null>}
+   */
+  getGuild(id) {
+    return this.connection.query(pipelines.Select('guilds', ['id', id]));
+  }
+
+  /**
+   * Creates a new guild
+   * @param {string} id The guild's ID
+   */
+  createGuild(id) {
+    return this.connection.query(pipelines.Insert({
+      values: {
+        legacy: true,
+        id
+      },
+      table: 'guilds'
+    }));
+  }
 };
 
 /**
@@ -182,4 +200,8 @@ module.exports = class DatabaseManager {
  * @prop {boolean} voted If the user has voted or not
  * @prop {number} times How many times they voted
  * @prop {string} id The user's ID
+ * 
+ * @typedef {object} Guild The guild model
+ * @prop {boolean} legacy If legacy mode is enabled
+ * @prop {string} id The guild's ID
  */
