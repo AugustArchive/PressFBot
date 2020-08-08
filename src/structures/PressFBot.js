@@ -24,6 +24,7 @@ const CommandStatisticsManager = require('./managers/CommandStatisticsManager');
 const TimeoutsManager = require('./managers/TimeoutsManager');
 const DatabaseManager = require('./managers/DatabaseManager');
 const CommandManager = require('./managers/CommandManager');
+const BotlistService = require('./services/BotlistService');
 const { HttpClient } = require('@augu/orchid');
 const EventsManager = require('./managers/EventManager');
 const { UserAgent } = require('../util/Constants');
@@ -64,6 +65,9 @@ module.exports = class PressFBot {
         secret: config.laffey_secret,
         port: config.laffey_port
       },
+      botlists: {
+        boats: config.hasOwnProperty('boats_token') ? config.boats_token : undefined
+      },
       voteLogUrl: config.vote_logs_url,
       owners: config.owners,
       token: config.token,
@@ -87,6 +91,12 @@ module.exports = class PressFBot {
      * @type {DatabaseManager}
      */
     this.database = new DatabaseManager(this);
+
+    /**
+     * The botlists service
+     * @type {BotlistService}
+     */
+    this.botlists = new BotlistService(this);
 
     /**
      * Manages all commands
@@ -200,6 +210,7 @@ module.exports = class PressFBot {
  * @prop {string} database_host The database host
  * @prop {number} database_port The database port
  * @prop {string} database_name The database's name
+ * @prop {string} [boats_token] The token to post to discord.boats
  * @prop {string} laffey_secret The secret to authenicate requests for [Laffey]
  * @prop {number} laffey_port The port to create a new [Laffey] instance
  * @prop {string} redis_host The host to connect to Redis
@@ -209,8 +220,9 @@ module.exports = class PressFBot {
  * @prop {string} token The token to authenicate to Discord
  * 
  * @typedef {object} Configuration
- * @prop {DatabaseConfig} database The database configuration
  * @prop {string} voteLogUrl The vote logs url
+ * @prop {DatabaseConfig} database The database configuration
+ * @prop {BotlistConfig} botlists Botlists configuration OwO
  * @prop {LaffeyConfig} laffey The [Laffey] configuration
  * @prop {RedisConfig} redis The redis configuration
  * @prop {string[]} owners The owners of the bot
@@ -233,4 +245,7 @@ module.exports = class PressFBot {
  * @prop {boolean} enabled If we should use [Laffey] or not
  * @prop {string} secret The secret to authenicate requests for [Laffey]
  * @prop {number} port The port to create a new [Laffey] instance
+ * 
+ * @typedef {object} BotlistConfig
+ * @prop {string} [boats] The discord.boats token
  */

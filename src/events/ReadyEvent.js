@@ -38,6 +38,6 @@ module.exports = class ReadyEvent extends Event {
     });
 
     await this.bot.timeouts.reapply();
-    // await this.bot.botlists.start();
+    await this.bot.botlists.start();
   }
 };

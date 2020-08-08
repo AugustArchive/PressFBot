@@ -33,5 +33,9 @@ module.exports = class GuildLeftEvent extends Event {
    */
   async emit(guild) {
     this.bot.logger.info(`Left ${guild.name} (${guild.id})`);
+    this.bot.client.editStatus('online', {
+      name: `f in chat in ${this.bot.client.guilds.size.toLocaleString()} guilds`,
+      type: 2
+    });
   }
 };

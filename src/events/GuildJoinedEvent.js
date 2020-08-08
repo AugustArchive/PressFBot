@@ -33,6 +33,9 @@ module.exports = class GuildJoinEvent extends Event {
    */
   async emit(guild) {
     this.bot.logger.info(`Joined ${guild.name} (${guild.id})`);
-    // todo: implement stuff like legacy mode lol
+    this.bot.client.editStatus('online', {
+      name: `f in chat in ${this.bot.client.guilds.size.toLocaleString()} guilds`,
+      type: 2
+    });
   }
 };

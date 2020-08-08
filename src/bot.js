@@ -66,6 +66,10 @@ const config = parse({
       type: 'int',
       default: 6379
     },
+    BOATS_TOKEN: {
+      type: 'string',
+      default: null
+    },
     VOTE_LOGS_URL: {
       type: 'string',
       default: null

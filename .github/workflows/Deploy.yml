@@ -20,6 +20,8 @@ jobs:
           node-version: 13.x
       - name: Install global packages
         run: npm i -g eslint
+      - name: Installs dependencies
+        run: npm install
       - name: Lint the repository
         run: eslint src --ext .js --fix
       - name: Deploy to server

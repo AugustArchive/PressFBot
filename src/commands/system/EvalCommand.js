@@ -98,6 +98,7 @@ module.exports = class EvalCommand extends Command {
 
     if (this.bot.config.laffey.enabled) tokens.push(this.bot.config.laffey.secret);
     if (this.bot.config.redis.password !== null) tokens.push(this.bot.config.redis.password);
+    if (this.bot.config.botlists) tokens.push(this.bot.config.botlists.boats);
 
     tokens = tokens.filter(Boolean);
     const cancellationToken = new RegExp(tokens.join('|'), 'gi');
