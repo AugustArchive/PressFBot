@@ -81,11 +81,14 @@ module.exports = class BotlistService {
    * @param {boolean} isFirst If it's the first iteration
    */
   async postStats(isFirst) {
-    if (!isFirst) {
-      this.logger.error('Environment is in development, timer will stop in the next iteration.');
-      return;
-    } else {
-      this.stop();
+    if (this.bot.config.env === 'development') {
+      if (!isFirst) {
+        this.logger.error('Environment is in development, timer will stop in the next iteration.');
+        return;
+      } else {
+        this.stop();
+        return;
+      }
     }
 
     if (this.bot.config.hasOwnProperty('botlists')) {
