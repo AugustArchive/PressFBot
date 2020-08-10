@@ -26,7 +26,7 @@ const { version } = require('../../package.json');
  * Represents the "constant" variables used through out PressFBot
  */
 module.exports = {
-  Day: 86400000,
+  Timeout: 43200000, // 12 hours
   UserAgent: `PressFBot (v${version}, https://github.com/auguwu/PressFBot)`,
   version,
   repository: 'https://github.com/auguwu/PressFBot',

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { Day } = require('../../util/Constants');
+const { Timeout } = require('../../util/Constants');
 
 /**
  * Represents a [TimeoutsManager], which basically
@@ -54,7 +54,7 @@ module.exports = class TimeoutsManager {
           await this.bot.redis.hdel('timeouts', id);
           await this.bot.database.setVote(value.split(':')[0], false);
         }
-      }, start - (Date.now() + Day));
+      }, start - (Date.now() + Timeout));
     }
   }
 
@@ -71,6 +71,6 @@ module.exports = class TimeoutsManager {
         await this.bot.redis.hdel('timeouts', id);
         await this.bot.database.setVote(id, false);
       }
-    }, Day);
+    }, Timeout);
   }
 };
