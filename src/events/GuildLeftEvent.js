@@ -37,5 +37,7 @@ module.exports = class GuildLeftEvent extends Event {
       name: `f in chat in ${this.bot.client.guilds.size.toLocaleString()} guilds`,
       type: 2
     });
+
+    await this.bot.database.deleteUser(guild.id);
   }
 };

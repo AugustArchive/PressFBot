@@ -198,6 +198,14 @@ module.exports = class DatabaseManager {
       table: 'guilds'
     }));
   }
+
+  /**
+   * Deletes a guild from the database
+   * @param {string} id The guild's ID
+   */
+  removeGuild(id) {
+    return this.connection.query(pipelines.Delete('guilds', ['id', id]));
+  }
 };
 
 /**

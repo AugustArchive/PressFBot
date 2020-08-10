@@ -44,6 +44,11 @@ module.exports = class CommandStatisticsManager {
      * How many messages has been seen :eyes:
      */
     this.messages = 0;
+
+    /**
+     * How many times F was sent in chat
+     */
+    this.pressF = 0;
   }
 
   /**

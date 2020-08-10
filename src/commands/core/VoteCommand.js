@@ -38,7 +38,7 @@ module.exports = class VoteCommand extends Command {
   async run(ctx) {
     const embed = this.bot.getEmbed()
       .setTitle('[ Voting for PressFBot ]')
-      .setImage('https://discord.boats/api/v2/widget/477594964742635531')
+      .setImage('https://discord.boats/api/v2/widget/477594964742635531?type=png')
       .setDescription([
         'You can vote for me on [**discord.boats**](https://discord.boats/bot/pressfbot)',
         '',

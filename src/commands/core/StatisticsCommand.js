@@ -83,11 +83,13 @@ module.exports = class StatisticsCommand extends Command {
 
     const embed = this.bot.getEmbed()
       .setAuthor(`${this.bot.client.user.username}#${this.bot.client.user.discriminator} [v${version} / ${hash}]`, 'https://pressfbot.augu.dev', this.bot.client.user.dynamicAvatarURL('png', 1024))
-      .setDescription(commits.length ? commits.slice(0, 5).map(commit => {
+      .setDescription(commits.length ? commits.slice(0, 3).map(commit => {
         const sha = commit.sha.slice(0, 8);
         const date = new Date(commit.commit.author.date);
+        const isSelf = commit.author.login === commit.committer.login;
+        const author = isSelf ? commit.author.login : `${commit.committer.login} with ${commit.author.login}`;
 
-        return `[**\`${sha}\`**](${commit.html_url}) **${commit.commit.message}** - ${commit.commit.author.name} at ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} ${util.escapeTime(date.getHours())}:${util.escapeTime(date.getMinutes())}:${date.getSeconds()}${date.getHours() >= 12 ? 'PM' : 'AM'}`;
+        return `[**\`${sha}\`**](${commit.html_url}) **${commit.commit.message}** - **${author}** | ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} ${util.escapeTime(date.getHours())}:${util.escapeTime(date.getMinutes())}:${date.getSeconds()}${date.getHours() >= 12 ? 'PM' : 'AM'}`;
       }).join('\n') : 'Couldn\'t get commits at this time.')
       .addField('❯ Miscellaneous', [
         `• **Guilds**: ${guilds}`,
@@ -95,10 +97,11 @@ module.exports = class StatisticsCommand extends Command {
         `• **Channels**: ${channels}`,
         `• **Uptime**: ${util.humanize(Math.floor(process.uptime()) * 1000)}`,
         `• **Shards**: ${ctx.guild.shard.id} / ${this.bot.client.shards.size} (~${shardPing}ms)`,
-        `• **Memory Usage (RSS/Heap)**: ${rss} / ${heap}`,
         `• **Messages Seen**: ${this.bot.statistics.messages.toLocaleString()}`,
         `• **Commands Executed**: ${this.bot.statistics.commandsExecuted.toLocaleString()}`,
-        `• **Most Used Command**: ${command} (${uses} Executions)`
+        `• **Most Used Command**: ${command} (${uses} Executions)`,
+        `• **Memory Usage (RSS/Heap)**: ${rss} / ${heap}`,
+        `• **How many times F was received**: ${this.bot.statistics.pressF.toLocaleString()}`
       ].join('\n'), true);
 
     return ctx.embed(embed);
