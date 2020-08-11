@@ -65,7 +65,7 @@ module.exports = class DatabaseManager {
 
     this.logger.info('We are connected to PostgreSQL! Now creating tables (if they do not exist)');
     await this.connection.query(pipelines.CreateTable('users', {
-      values: {
+      schema: {
         voted: {
           nullable: false,
           primary: false,
@@ -85,7 +85,7 @@ module.exports = class DatabaseManager {
     }), false);
 
     await this.connection.query(pipelines.CreateTable('guilds', {
-      values: {
+      schema: {
         legacy: {
           nullable: false,
           primary: false,
