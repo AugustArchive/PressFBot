@@ -107,9 +107,8 @@ process.on('uncaughtException', async(error) => {
   logger.error('Received an uncaught exception:', error);
 
   // fuck eris man istg
-  if (error.message.includes('by peer')) {
+  if (error.message.includes('by peer') || error.code === 1001) {
     logger.info('Restarting PressFBot...');
-    bot.client.disconnect({ reconnect: false });
     await bot.client.connect()
       .then(() => logger.info('Reconnecting through tubes...'))
       .catch(logger.error);
@@ -119,7 +118,7 @@ process.on('uncaughtException', async(error) => {
 process.on('unhandledRejection', (error) => logger.error('Received an unhandled Promise rejection:', error));
 process.on('SIGINT', () => {
   logger.warn('Disposing PressFBot...');
-  bot.dispose()
-    .then(() => process.exit(0))
-    .catch(() => process.exit(1));
+  bot.dispose();
+
+  process.exit(0);
 });
