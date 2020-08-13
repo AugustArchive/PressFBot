@@ -18,7 +18,7 @@
     "eris": "0.13.3",
     "ioredis": "4.17.3",
     "laffey": "1.0.1",
-    "leeks.js": "0.0.8",
+    "leeks.js": "0.0.9",
     "veza": "1.1.0"
   },
   "devDependencies": {
