@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "@augu/eslint-config": "1.6.1",
-    "eslint": "7.6.0"
+    "eslint": "7.7.0"
   }
 }
