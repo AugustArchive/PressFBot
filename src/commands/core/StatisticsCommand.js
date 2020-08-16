@@ -55,22 +55,6 @@ module.exports = class StatisticsCommand extends Command {
    * @param {import('../../structures/Message')} ctx The command's context
    */
   async run(ctx) {
-    let commits;
-    try {
-      const res = await this.bot.http.request({
-        method: 'get',
-        url: 'https://api.github.com/repos/auguwu/PressFBot/commits',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      const data = res.json();
-      commits = [].concat(data).slice(0, 3);
-    } catch(ex) {
-      commits = [];
-    }
-
     const memory = process.memoryUsage();
     const hash = util.getCommitHash();
     const guilds = this.bot.client.guilds.size.toLocaleString();
@@ -83,15 +67,7 @@ module.exports = class StatisticsCommand extends Command {
 
     const embed = this.bot.getEmbed()
       .setAuthor(`${this.bot.client.user.username}#${this.bot.client.user.discriminator} [v${version} / ${hash}]`, 'https://pressfbot.augu.dev', this.bot.client.user.dynamicAvatarURL('png', 1024))
-      .setDescription(commits.length ? commits.map(commit => {
-        const sha = commit.sha.slice(0, 8);
-        const date = new Date(commit.commit.author.date);
-        const isSelf = commit.author.login === commit.committer.login;
-        const author = isSelf ? commit.author.login : `${commit.committer.login} with ${commit.author.login}`;
-
-        return `[**\`${sha}\`**](${commit.html_url}) **${commit.commit.message}** - **${author}** | ${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} ${util.escapeTime(date.getHours())}:${util.escapeTime(date.getMinutes())}:${date.getSeconds()}${date.getHours() >= 12 ? 'PM' : 'AM'}`;
-      }).join('\n') : 'Couldn\'t get commits at this time.')
-      .addField('❯ Miscellaneous', [
+      .setDescription([
         `• **Guilds**: ${guilds}`,
         `• **Users**: ${members}`,
         `• **Channels**: ${channels}`,
@@ -102,7 +78,7 @@ module.exports = class StatisticsCommand extends Command {
         `• **Most Used Command**: ${command} (${uses} Executions)`,
         `• **Memory Usage (RSS/Heap)**: ${rss} / ${heap}`,
         `• **How many times F was received**: ${this.bot.statistics.pressF.toLocaleString()}`
-      ].join('\n'), true);
+      ]);
 
     return ctx.embed(embed);
   }
