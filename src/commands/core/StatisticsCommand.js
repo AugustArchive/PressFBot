@@ -66,7 +66,7 @@ module.exports = class StatisticsCommand extends Command {
       });
 
       const data = res.json();
-      commits = [].concat(data);
+      commits = [].concat(data).slice(0, 3);
     } catch(ex) {
       commits = [];
     }
@@ -83,7 +83,7 @@ module.exports = class StatisticsCommand extends Command {
 
     const embed = this.bot.getEmbed()
       .setAuthor(`${this.bot.client.user.username}#${this.bot.client.user.discriminator} [v${version} / ${hash}]`, 'https://pressfbot.augu.dev', this.bot.client.user.dynamicAvatarURL('png', 1024))
-      .setDescription(commits.length ? commits.slice(0, 3).map(commit => {
+      .setDescription(commits.length ? commits.map(commit => {
         const sha = commit.sha.slice(0, 8);
         const date = new Date(commit.commit.author.date);
         const isSelf = commit.author.login === commit.committer.login;

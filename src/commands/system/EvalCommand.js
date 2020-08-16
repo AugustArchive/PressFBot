@@ -50,7 +50,7 @@ module.exports = class EvalCommand extends Command {
 
     const isAsync = script.includes('return') || script.includes('await');
     const isSlient = script.includes('--slient') || script.includes('-s');
-    const time = Date.now();
+    const time = process.hrtime();
     let result;
 
     try {
@@ -66,8 +66,9 @@ module.exports = class EvalCommand extends Command {
       const res = this.redactTokens(result);
       if (isSlient) return;
 
+      const now = process.hrtime(time);
       return ctx.send([
-        `> Script took **${Date.now() - time}ms** to execute`,
+        `> Script took **${parseFloat(now[0] * 1000 + now[1] / 1e6)}ms** to execute`,
         '',
         '```js',
         res,
@@ -76,8 +77,9 @@ module.exports = class EvalCommand extends Command {
     } catch(ex) {
       if (isSlient) return;
 
+      const now = process.hrtime(time);
       return ctx.send([
-        `> Script took **${Date.now() - time}ms** to execute`,
+        `> Script took **${parseFloat(now[0] * 1000 + now[1] / 1e6)}ms** to execute`,
         '',
         '```js',
         `[${ex.name}] ${ex.message.slice(ex.message.indexOf(ex.name) + 1)}`,
@@ -93,6 +95,7 @@ module.exports = class EvalCommand extends Command {
   redactTokens(script) {
     let tokens = [
       this.bot.config.token,
+      this.bot.config.redis.host,
       this.bot.config.database.password
     ];
 
@@ -102,6 +105,6 @@ module.exports = class EvalCommand extends Command {
 
     tokens = tokens.filter(Boolean);
     const cancellationToken = new RegExp(tokens.join('|'), 'gi');
-    return script.replace(cancellationToken, '--snip--');
+    return script.replace(cancellationToken, '?');
   }
 };

@@ -107,7 +107,7 @@ process.on('uncaughtException', async(error) => {
   logger.error('Received an uncaught exception:', error);
 
   // fuck eris man istg
-  if (error.message.includes('by peer') || error.code === 1001) {
+  if (error.message.includes('by peer') || (error.code && error.code === 1001)) {
     logger.info('Restarting PressFBot...');
     await bot.client.connect()
       .then(() => logger.info('Reconnecting through tubes...'))

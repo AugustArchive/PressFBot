@@ -63,7 +63,7 @@ module.exports = class CommandService {
     if (msg.content === 'f' || msg.content === 'F' || msg.content === '01000110') {
       this.bot.statistics.pressF++;
       const random = Math.random();
-      const emote = guild.legacy ? ' :hibiscus:' : '';
+      const emote = !guild.legacy ? ' :hibiscus:' : '';
 
       if (!user.voted && !guild.legacy && random <= 0.3) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
       return msg.channel.createMessage({
