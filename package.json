@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@augu/dotenv": "1.1.0",
-    "@augu/immutable": "0.4.0",
+    "@augu/immutable": "0.4.1",
     "@augu/maru": "1.2.6",
     "@augu/orchid": "1.5.0",
     "common-tags": "1.8.0",
