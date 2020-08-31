@@ -2,14 +2,4 @@
 > View live changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Fix connection issues
-- Linting fixes
-- Fix GitHub actions from being "successful" while not
-- Moved from PostgreSQL and fully with Redis
-
-Additions:
-- Added `changelog` command to see the recent changelogs
-- Added `emote` command to add a word or an emoji when you press F
-
-Changes:
-- Moved to Docker
+- Fix `undefined` issue in `emote` command

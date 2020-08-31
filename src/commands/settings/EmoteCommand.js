@@ -39,7 +39,7 @@ module.exports = class EmoteCommand extends Command {
    */
   async run(ctx) {
     if (!ctx.member.permission.has('manageGuild')) return ctx.send('You are missing the **Manage Server** permission');
-    if (ctx.args.isEmpty(0)) return ctx.send('Missing emote argument');
+    if (!ctx.args.has(0)) return ctx.send('Missing emote argument');
 
     const emote = ctx.args.get(0);
     const data = JSON.parse(await this.bot.redis.hget('guild', ctx.guild.id));

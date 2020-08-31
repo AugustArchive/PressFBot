@@ -58,15 +58,7 @@ module.exports = class ArgumentParser {
    * @param {number} i The index to check
    */
   has(i) {
-    return this.raw.length < i;
-  }
-
-  /**
-   * Checks if `i` is not included
-   * @param {number} i The index 
-   */
-  isEmpty(i) {
-    return this.has(i) === true;
+    return !!this.raw[i];
   }
 
   /**
