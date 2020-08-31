@@ -44,7 +44,7 @@ module.exports = class ShardInfoCommand extends Command {
       const guilds = this.bot.client.guilds.filter(g => g.shard.id === shard.id);
       const members = guilds.reduce((a, b) => a + b.memberCount, 0);
       const memoryRSS = util.formatSize(memory.rss);
-      const memoryHeap = util.formatSize(memory.heapTotal - memory.heapUsed);
+      const memoryHeap = util.formatSize(memory.heapUsed);
 
       const prefix = shard.status === 'disconnected' ? '-' : shard.status === 'connecting' || shard.status === 'handshaking' || shard.status === 'resuming' ? '*' : '+';
       info.push(`${prefix} #${shard.id} ${current} | G: ${guilds.length} | U: ${members} | L: ${shard.latency}ms | RSS: ${memoryRSS} | H: ${memoryHeap}`);

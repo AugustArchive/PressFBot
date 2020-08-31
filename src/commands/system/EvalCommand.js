@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+const { duration } = require('../../util');
 const { inspect } = require('util');
 const { Command } = require('../../structures');
 
@@ -66,9 +67,8 @@ module.exports = class EvalCommand extends Command {
       const res = this.redactTokens(result);
       if (isSlient) return;
 
-      const now = process.hrtime(time);
       return ctx.send([
-        `> Script took **${parseFloat(now[0] * 1000 + now[1] / 1e6)}ms** to execute`,
+        `> Script took **${duration(time).toFixed(2)}ms** to execute`,
         '',
         '```js',
         res,
@@ -77,9 +77,8 @@ module.exports = class EvalCommand extends Command {
     } catch(ex) {
       if (isSlient) return;
 
-      const now = process.hrtime(time);
       return ctx.send([
-        `> Script took **${parseFloat(now[0] * 1000 + now[1] / 1e6)}ms** to execute`,
+        `> Script took **${duration(time).toFixed(2)}ms** to execute`,
         '',
         '```js',
         `[${ex.name}] ${ex.message.slice(ex.message.indexOf(ex.name) + 1)}`,
@@ -105,6 +104,6 @@ module.exports = class EvalCommand extends Command {
 
     tokens = tokens.filter(Boolean);
     const cancellationToken = new RegExp(tokens.join('|'), 'gi');
-    return script.replace(cancellationToken, '?');
+    return script.replace(cancellationToken, '--snip-- Uwu');
   }
 };

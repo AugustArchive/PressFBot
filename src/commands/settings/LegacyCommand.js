@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 
-const { pipelines } = require('@augu/maru');
 const { Command } = require('../../structures');
 
 module.exports = class LegacyCommand extends Command {
@@ -39,18 +38,11 @@ module.exports = class LegacyCommand extends Command {
   async run(ctx) {
     if (!ctx.member.permission.has('manageGuild')) return ctx.send('You are missing the **Manage Server** permission');
 
-    const settings = await this.bot.database.getGuild(ctx.guild.id);
-    const bool = !settings.legacy;
-
-    const { legacy: enabled } = await this.bot.database.connection.query(pipelines.Update({
-      returning: ['legacy'],
-      values: { legacy: bool },
-      query: ['id', ctx.guild.id],
-      table: 'guilds',
-      type: 'set'
-    }));
-
+    const data = JSON.parse(await this.bot.redis.hget('guild', ctx.guild.id));
+    const enabled = !data.legacy;
+    await this.bot.redis.hset('guild', ctx.guild.id, JSON.stringify({ id: ctx.guild.id, legacy: enabled, emote: data.emote }));
+    
     const emote = enabled ? ':white_check_mark:' : ':question:';
-    return ctx.send(`${emote} **Legacy mode is ${enabled ? 'enabled' : 'disabled'}**`);
+    return ctx.send(`${emote} **Legacy mode is now ${enabled ? 'enabled' : 'disabled'}**`);
   }
 };

@@ -75,7 +75,7 @@ module.exports = class Logger {
    * @credit [ThatTonybo/num-ord](https://github.com/ThatTonybo/num-ord)
    */
   getNumberOrdinal(int) {
-    return int == 1 ? `${int}st` : int == 2 ? `${int}nd` : int == 3 ? `${int}rd` : int >= 4 ? `${int}th` : null;
+    return int === 1 ? `${int}st` : int === 2 ? `${int}nd` : int === 3 ? `${int}rd` : int >= 4 ? `${int}th` : null;
   }
 
   /**

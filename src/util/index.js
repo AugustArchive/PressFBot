@@ -20,9 +20,7 @@
  * SOFTWARE.
  */
 
-const { existsSync } = require('fs');
 const { execSync } = require('child_process');
-const { join } = require('path');
 
 /**
  * Extra utilities that will help the bot in the long run
@@ -192,23 +190,6 @@ module.exports = {
   },
 
   /**
-   * Creates a chunked array
-   * @template T The result
-   * @param {T[]} entries The entries
-   * @param {number} size The size
-   * @credit [Kurasuta](https://github.com/DevYukine/Kurasuta/blob/master/src/Util/Util.ts)
-   * @returns {T[][]} A new array that has been chunked
-   */
-  chunkArray(entries, size) {
-    const result = [];
-    const amount = Math.floor(entries.length / size);
-    const mod = entries.length % size;
-
-    for (let i = 0; i < size; i++) result[i] = entries.splice(0, i < mod ? amount + 1 : amount);
-    return result;
-  },
-
-  /**
    * Humanizes a date to a string
    * @param {number} ms 
    */
@@ -240,6 +221,15 @@ module.exports = {
     if (sec > 0) humanized += `${sec} seconds`;
   
     return humanized;
+  },
+
+  /**
+   * Gets the time of a process.hrtime timestamp
+   * @param {[number, number]} start The start
+   */
+  duration(start) {
+    const difference = process.hrtime(start);
+    return (difference[0] * 1e9 + difference[1]) / 1e6;
   }
 };
 

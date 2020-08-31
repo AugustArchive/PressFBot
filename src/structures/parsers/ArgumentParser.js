@@ -62,6 +62,14 @@ module.exports = class ArgumentParser {
   }
 
   /**
+   * Checks if `i` is not included
+   * @param {number} i The index 
+   */
+  isEmpty(i) {
+    return this.has(i) === true;
+  }
+
+  /**
    * Slices all of the arguments by `start` (or `end`) and returns a new [ArgumentParser]
    * @param {number} start The start
    * @param {number} [end] The end point

@@ -22,7 +22,6 @@
 
 const CommandStatisticsManager = require('./managers/CommandStatisticsManager');
 const TimeoutsManager = require('./managers/TimeoutsManager');
-const DatabaseManager = require('./managers/DatabaseManager');
 const CommandManager = require('./managers/CommandManager');
 const BotlistService = require('./services/BotlistService');
 const { HttpClient } = require('@augu/orchid');
@@ -85,12 +84,6 @@ module.exports = class PressFBot {
      * @type {TimeoutsManager}
      */
     this.timeouts = new TimeoutsManager(this);
-
-    /**
-     * Manages the database connections
-     * @type {DatabaseManager}
-     */
-    this.database = new DatabaseManager(this);
 
     /**
      * The botlists service
@@ -162,7 +155,6 @@ module.exports = class PressFBot {
     this.redis.once('ready', () => this.logger.info('Connected to Redis!'));
     this.redis.on('wait', () => this.logger.warn('Redis has disconnected unexpectly! Waiting for a new connection...'));
 
-    await this.database.connect();
     await this.commands.load();
     await this.events.load();
 
@@ -170,7 +162,13 @@ module.exports = class PressFBot {
     if (this.webhook !== undefined) this.webhook.listen();
 
     await this.client.connect()
-      .then(() => this.logger.info('Now connecting through tubes with Discord O_o'))
+      .then(() => {
+        this.logger.info('Now connecting through tubes with Discord O_o');
+        this.client.editStatus('idle', {
+          name: 'watching the systems boot up... ✨',
+          type: 3
+        });
+      })
       .catch(() => {
         this.logger.error('Unable to connect to Discord');
         process.exit(1);
@@ -189,10 +187,9 @@ module.exports = class PressFBot {
   /**
    * Disposes this [PressFBot] instance
    */
-  async dispose() {
+  dispose() {
     if (this.webhook !== undefined) this.webhook.close();
     
-    await this.database.dispose();
     this.commands.clear();
     this.events.clear();
     this.client.disconnect({ reconnect: false });

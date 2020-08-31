@@ -60,13 +60,13 @@ module.exports = class StatisticsCommand extends Command {
     const guilds = this.bot.client.guilds.size.toLocaleString();
     const members = this.bot.client.guilds.reduce((a, b) => a + b.memberCount, 0).toLocaleString();
     const rss = util.formatSize(memory.rss);
-    const heap = util.formatSize(memory.heapTotal - memory.heapUsed);
+    const heap = util.formatSize(memory.heapUsed);
     const channels = Object.keys(this.bot.client.channelGuildMap).length.toLocaleString();
     const shardPing = this.bot.client.shards.reduce((a, b) => a + b.latency, 0);
     const { command, uses } = this.bot.statistics.getCommandUsages();
 
     const embed = this.bot.getEmbed()
-      .setAuthor(`${this.bot.client.user.username}#${this.bot.client.user.discriminator} [v${version} / ${hash}]`, 'https://pressfbot.augu.dev', this.bot.client.user.dynamicAvatarURL('png', 1024))
+      .setAuthor(`${this.bot.client.user.username}#${this.bot.client.user.discriminator} [v${version} | ${hash}]`, 'https://pressfbot.augu.dev', this.bot.client.user.dynamicAvatarURL('png', 1024))
       .setDescription([
         `• **Guilds**: ${guilds}`,
         `• **Users**: ${members}`,
@@ -74,11 +74,15 @@ module.exports = class StatisticsCommand extends Command {
         `• **Uptime**: ${util.humanize(Math.floor(process.uptime()) * 1000)}`,
         `• **Shards**: ${ctx.guild.shard.id} / ${this.bot.client.shards.size} (~${shardPing}ms)`,
         `• **Messages Seen**: ${this.bot.statistics.messages.toLocaleString()}`,
+        `• **Webhook Requests**: ${this.bot.webhook ? this.bot.webhook.requests.toLocaleString() : 'Not Enabled'}`,
         `• **Commands Executed**: ${this.bot.statistics.commandsExecuted.toLocaleString()}`,
         `• **Most Used Command**: ${command} (${uses} Executions)`,
         `• **Memory Usage (RSS/Heap)**: ${rss} / ${heap}`,
+        `• **Webhook Votes before restart**: ${this.bot.webhook ? this.bot.webhook.votes.toLocaleString() : 'Not Enabled'}`,
         `• **How many times F was received**: ${this.bot.statistics.pressF.toLocaleString()}`
-      ]);
+      ])
+      .setFooter('Made by August#5820 | https://augu.dev')
+      .setTimestamp();
 
     return ctx.embed(embed);
   }

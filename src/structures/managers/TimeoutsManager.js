@@ -20,7 +20,9 @@
  * SOFTWARE.
  */
 
+const { Collection } = require('@augu/immutable');
 const { Timeout } = require('../../util/Constants');
+const Logger = require('../Logger');
 
 /**
  * Represents a [TimeoutsManager], which basically
@@ -33,6 +35,17 @@ module.exports = class TimeoutsManager {
    * @param {import('../PressFBot')} bot The bot instance
    */
   constructor(bot) {
+    /**
+     * List of timers
+     * @type {Collection<NodeJS.Timeout>}
+     */
+    this.timers = new Collection();
+
+    /**
+     * Logger instance
+     */
+    this.logger = new Logger('Timeouts');
+
     /**
      * The bot instance
      */
@@ -47,14 +60,28 @@ module.exports = class TimeoutsManager {
     for (const id of all) {
       const value = await this.bot.redis.hget('timeouts', id);
       const start = Number(value);
-
-      setTimeout(async() => {
+      const timeout = setTimeout(async() => {
         const exists = await this.bot.redis.hexists('timeouts', id);
         if (exists) {
+          this.logger.info(`Timeout for user ${id} exists, now clearing`);
           await this.bot.redis.hdel('timeouts', id);
-          await this.bot.database.setVote(value.split(':')[0], false);
+  
+          const user = await this.bot.redis.hget('users', id);
+          const data = JSON.parse(user);
+  
+          const payload = JSON.stringify({ id, voted: false, times: data.times });
+          await this.bot.redis.hset('users', id, payload);
+  
+          const timer = this.timers.get(`timer:${id}`);
+          clearTimeout(timer);
+        } else {
+          this.logger.warn(`Timeout for user ${id} doesn't exist, still clearing this one so it won't bleed out`);
+          clearTimeout(timeout);
         }
       }, start - (Date.now() + Timeout));
+
+      if (this.timers.has(`timer:${id}`)) this.timers.delete(`timer:${id}`);
+      this.timers.set(`timer:${id}`, timeout);
     }
   }
 
@@ -66,11 +93,26 @@ module.exports = class TimeoutsManager {
     const date = Date.now();
     await this.bot.redis.hset('timeouts', id, date);
 
-    setTimeout(async() => {
-      if (await this.bot.redis.hexists('timeouts', id)) {
+    const timeout = setTimeout(async() => {
+      const exists = await this.bot.redis.hexists('timeouts', id);
+      if (exists) {
+        this.logger.info(`Timeout for user ${id} exists, now clearing`);
         await this.bot.redis.hdel('timeouts', id);
-        await this.bot.database.setVote(id, false);
+
+        const user = await this.bot.redis.hget('users', id);
+        const data = JSON.parse(user);
+
+        const payload = JSON.stringify({ id, voted: false, times: data.times });
+        await this.bot.redis.hset('users', id, payload);
+
+        const timer = this.timers.get(`timer:${id}`);
+        clearTimeout(timer);
+      } else {
+        this.logger.warn(`Timeout for user ${id} doesn't exist, still clearing this one so it won't bleed out`);
+        clearTimeout(timeout);
       }
     }, Timeout);
+
+    this.timers.set(`timer:${id}`, timeout);
   }
 };

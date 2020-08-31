@@ -30,26 +30,25 @@ module.exports = class VoteEvent extends Event {
 
   /**
    * Emits when a vote has been received
-   * @param {import('laffey').laffey.BotPacket} bot The bot
-   * @param {import('laffey').laffey.UserPacket} user The user
+   * @param {import('laffey').BotPacket} bot The bot
+   * @param {import('laffey').UserPacket} user The user
    */
   async emit(bot, user) {
     if (bot.name !== 'PressFBot') return;
 
     this.bot.logger.info(`User ${user.username}#${user.discriminator} has voted for PressFBot, now at ${this.bot.webhook.requests.toLocaleString()} requests received`);
-    await this.bot.database.setVote(user.id, true);
     await this.bot.timeouts.apply(user.id);
-    await this.bot.database.incrementTimes(user.id);
+
+    const data = JSON.parse(await this.bot.redis.hget('users', user.id));
+    const times = data.times++;
+    await this.bot.redis.hset('users', user.id, JSON.stringify({ id: user.id, voted: true, times }));
 
     const u = this.bot.client.users.get(user.id);
     if (!u) return;
 
-    const votes = await this.bot.redis.hkeys('timeouts');
     const embed = this.bot.getEmbed()
       .setAuthor(`[ ${user.username}#${user.discriminator} | Voted for ${bot.name} ]`, bot.url, bot.avatar)
-      .setDescription([
-        `:pencil2: **Now at ${votes.length} votes and ${this.bot.webhook.requests.toLocaleString()} requests received!**`
-      ].join('\n'));
+      .setDescription(`:pencil2: **Now at ${this.bot.webhook.votes.toLocaleString()} votes and ${this.bot.webhook.requests.toLocaleString()} requests received!**`);
 
     if (this.bot.config.voteLogUrl !== null) await this.bot.http.request({
       method: 'POST',

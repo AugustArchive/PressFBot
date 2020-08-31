@@ -1,28 +1,27 @@
 {
   "name": "@august/pressfbot",
   "description": "Press F in chat bois",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "main": "build/bot.js",
   "license": "MIT",
   "repository": "https://github.com/auguwu/PressFBot",
   "author": "Chris \"August\" Hernandez <august@augu.dev>",
   "scripts": {
+    "prepare": "yarn lint",
     "lint": "eslint src --ext .js --fix"
   },
   "dependencies": {
     "@augu/dotenv": "1.1.0",
     "@augu/immutable": "0.4.2",
-    "@augu/maru": "1.2.6",
     "@augu/orchid": "1.6.0",
     "common-tags": "1.8.0",
     "eris": "0.13.3",
     "ioredis": "4.17.3",
     "laffey": "1.0.1",
-    "leeks.js": "0.0.9",
-    "veza": "1.1.0"
+    "leeks.js": "0.0.9"
   },
   "devDependencies": {
-    "@augu/eslint-config": "1.6.1",
+    "@augu/eslint-config": "1.7.2",
     "eslint": "7.7.0"
   }
 }

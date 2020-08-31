@@ -48,22 +48,30 @@ module.exports = class CommandService {
     if (msg.author.bot || msg.channel.type !== 0) return;
     if (!msg.channel.permissionsOf(this.bot.client.user.id).has('sendMessages')) return;
 
-    let user = await this.bot.database.getUser(msg.author.id);
-    if (user === null) {
-      await this.bot.database.createUser(msg.author.id);
-      user = await this.bot.database.getUser(msg.author.id);
+    let user;
+    if (!(await this.bot.redis.hexists('users', msg.author.id))) {
+      const data = JSON.stringify({ id: msg.author.id, times: 0, voted: false });
+      await this.bot.redis.hset('users', msg.author.id, data);
+
+      user = JSON.parse(await this.bot.redis.hget('users', msg.author.id));
+    } else {
+      user = JSON.parse(await this.bot.redis.hget('users', msg.author.id));
     }
 
-    let guild = await this.bot.database.getGuild(msg.channel.guild.id);
-    if (guild === null) {
-      await this.bot.database.createGuild(msg.channel.guild.id);
-      guild = await this.bot.database.getGuild(msg.channel.guild.id);
+    let guild;
+    if (!(await this.bot.redis.hexists('guild', msg.channel.guild.id))) {
+      const data = JSON.stringify({ id: msg.channel.guild.id, legacy: false, emote: ':hibiscus:' });
+      await this.bot.redis.hset('guild', msg.channel.guild.id, data);
+
+      guild = JSON.parse(await this.bot.redis.hget('guild', msg.channel.guild.id));
+    } else {
+      guild = JSON.parse(await this.bot.redis.hget('guild', msg.channel.guild.id));
     }
 
     if (msg.content === 'f' || msg.content === 'F' || msg.content === '01000110') {
       this.bot.statistics.pressF++;
       const random = Math.random();
-      const emote = !guild.legacy ? ' :hibiscus:' : '';
+      const emote = !guild.legacy ? ` ${guild.emote}` : '';
 
       if (!user.voted && !guild.legacy && random <= 0.3) msg.channel.createMessage('Consider supporting PressFBot, run `F_vote` for more information.');
       return msg.channel.createMessage({
@@ -111,7 +119,8 @@ module.exports = class CommandService {
             '',
             '```js',
             `[${ex.name}] ${ex.message.slice(ex.message.indexOf(ex.name) + 1)}`,
-            '```'
+            '```',
+            ex.stack
           ].join('\n'));
 
         this.bot.logger.error(`Unable to run ${command.name}:`, ex);
