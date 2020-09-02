@@ -31,17 +31,15 @@ module.exports = class VoteEvent extends Event {
   /**
    * Emits when a vote has been received
    * @param {import('laffey').BotPacket} bot The bot
-   * @param {import('laffey').UserPacket} user The user
+   * @param {import('laffey').UserPacket & { test: boolean }} user The user
    */
   async emit(bot, user) {
     if (bot.name !== 'PressFBot') return;
-
     this.bot.logger.info(`User ${user.username}#${user.discriminator} has voted for PressFBot, now at ${this.bot.webhook.requests.toLocaleString()} requests received`);
-    await this.bot.timeouts.apply(user.id);
-
+    
     const data = JSON.parse(await this.bot.redis.hget('users', user.id));
-    const times = data.times++;
-    await this.bot.redis.hset('users', user.id, JSON.stringify({ id: user.id, voted: true, times }));
+    await this.bot.redis.hset('users', user.id, JSON.stringify({ id: user.id, voted: true, times: data.times + 1 }));
+    await this.bot.timeouts.apply(user.id);
 
     const u = this.bot.client.users.get(user.id);
     if (!u) return;
@@ -49,6 +47,8 @@ module.exports = class VoteEvent extends Event {
     const embed = this.bot.getEmbed()
       .setAuthor(`[ ${user.username}#${user.discriminator} | Voted for ${bot.name} ]`, bot.url, bot.avatar)
       .setDescription(`:pencil2: **Now at ${this.bot.webhook.votes.toLocaleString()} votes and ${this.bot.webhook.requests.toLocaleString()} requests received!**`);
+
+    if (user.hasOwnProperty('test')) embed.setFooter('This embed is a test feature, so it doesn\'t affect the voting system in the future.');
 
     if (this.bot.config.voteLogUrl !== null) await this.bot.http.request({
       method: 'POST',

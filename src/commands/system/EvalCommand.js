@@ -94,8 +94,7 @@ module.exports = class EvalCommand extends Command {
   redactTokens(script) {
     let tokens = [
       this.bot.config.token,
-      this.bot.config.redis.host,
-      this.bot.config.database.password
+      this.bot.config.redis.host
     ];
 
     if (this.bot.config.laffey.enabled) tokens.push(this.bot.config.laffey.secret);

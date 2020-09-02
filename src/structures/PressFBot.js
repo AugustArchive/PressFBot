@@ -47,30 +47,24 @@ module.exports = class PressFBot {
      * @type {Configuration}
      */
     this.config = {
-      database: {
-        username: config.database_username,
-        password: config.database_password,
-        host: config.database_host,
-        port: config.database_port,
-        db: config.database_name
-      },
       redis: {
-        password: config.redis_password,
-        host: config.redis_host,
-        port: config.redis_port
+        password: config.REDIS_PASSWORD,
+        host: config.REDIS_HOST,
+        port: config.REDIS_PORT,
+        db: config.REDIS_DB_ID || 2
       },
       laffey: {
-        enabled: config.laffey_enabled,
-        secret: config.laffey_secret,
-        port: config.laffey_port
+        enabled: config.LAFFEY_ENABLED,
+        secret: config.LAFFEY_SECRET,
+        port: config.LAFFEY_PORT
       },
       botlists: {
-        boats: config.hasOwnProperty('boats_token') ? config.boats_token : undefined
+        boats: config.hasOwnProperty('BOATS_TOKEN') ? config.BOATS_TOKEN : undefined
       },
-      voteLogUrl: config.vote_logs_url,
-      owners: config.owners,
-      token: config.token,
-      env: config.node_env
+      voteLogUrl: config.VOTE_LOGS_URL,
+      owners: config.OWNERS,
+      token: config.TOKEN,
+      env: config.NODE_ENV
     };
 
     /**
@@ -113,7 +107,7 @@ module.exports = class PressFBot {
      * Discord client
      * @type {Client}
      */
-    this.client = new Client(config.token, {
+    this.client = new Client(config.TOKEN, {
       getAllUsers: true,
       maxShards: 'auto',
       restMode: true
@@ -201,39 +195,26 @@ module.exports = class PressFBot {
 
 /**
  * @typedef {object} EnvConfig
- * @prop {string} database_username The database username
- * @prop {string} database_password The database password
- * @prop {string} [redis_password] The password (optional) to connect to Redis
- * @prop {boolean} laffey_enabled If we should use [Laffey] or not
- * @prop {string} vote_logs_url The vote logs url
- * @prop {string} database_host The database host
- * @prop {number} database_port The database port
- * @prop {string} database_name The database's name
- * @prop {string} [boats_token] The token to post to discord.boats
- * @prop {string} laffey_secret The secret to authenicate requests for [Laffey]
- * @prop {number} laffey_port The port to create a new [Laffey] instance
- * @prop {string} redis_host The host to connect to Redis
- * @prop {number} redis_port The port to connect to Redis
- * @prop {'development' | 'production'} node_env The environment
- * @prop {string[]} owners The owners of the bot
- * @prop {string} token The token to authenicate to Discord
+ * @prop {string} [REDIS_PASSWORD] The password (optional) to connect to Redis
+ * @prop {boolean} LAFFEY_ENABLED If we should use [Laffey] or not
+ * @prop {string} VOTE_LOGS_URL The vote logs url
+ * @prop {string} [BOATS_TOKEN] The token to post to discord.boats
+ * @prop {string} LAFFEY_SECRET The secret to authenicate requests for [Laffey]
+ * @prop {number} LAFFEY_PORT The port to create a new [Laffey] instance
+ * @prop {string} REDIS_HOST The host to connect to Redis
+ * @prop {number} REDIS_PORT The port to connect to Redis
+ * @prop {'development' | 'production'} NODE_ENV The environment
+ * @prop {string[]} OWNERS The owners of the bot
+ * @prop {string} TOKEN The token to authenicate to Discord
  * 
  * @typedef {object} Configuration
  * @prop {string} voteLogUrl The vote logs url
- * @prop {DatabaseConfig} database The database configuration
  * @prop {BotlistConfig} botlists Botlists configuration OwO
  * @prop {LaffeyConfig} laffey The [Laffey] configuration
  * @prop {RedisConfig} redis The redis configuration
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
  * @prop {'development' | 'production'} env The environment
- * 
- * @typedef {object} DatabaseConfig
- * @prop {string} username The database username
- * @prop {string} password The database password
- * @prop {string} host The database host
- * @prop {number} port The database port
- * @prop {string} name The database's name
  * 
  * @typedef {object} RedisConfig
  * @prop {string} [password] The password (optional) to connect to Redis

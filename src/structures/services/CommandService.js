@@ -118,9 +118,8 @@ module.exports = class CommandService {
             `If this command keeps failing, report it to <@280158289667555328> at <${Support}>`,
             '',
             '```js',
-            `[${ex.name}] ${ex.message.slice(ex.message.indexOf(ex.name) + 1)}`,
-            '```',
-            ex.stack
+            ...ex.stack.split('\n'),
+            '```'
           ].join('\n'));
 
         this.bot.logger.error(`Unable to run ${command.name}:`, ex);

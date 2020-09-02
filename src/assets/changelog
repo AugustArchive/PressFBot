@@ -2,4 +2,6 @@
 > View live changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Fix `undefined` issue in `emote` command
+- Update dependency **@augu/dotenv** from v1.1.0 -> v1.2.0
+- Fixed timeouts structure, which doesn't kill a timeout when the bot restarts
+- Miscellaneous development fixes

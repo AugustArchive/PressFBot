@@ -48,6 +48,10 @@ const config = parse({
       type: 'string',
       default: undefined
     },
+    REDIS_DB_ID: {
+      type: 'int',
+      default: 2
+    },
     DATABASE_HOST: 'string',
     DATABASE_PORT: 'int',
     LAFFEY_SECRET: {

@@ -209,18 +209,18 @@ module.exports = {
     const mins = Math.floor(ms / 1000 / 60);
     ms -= mins * 1000 * 60;
   
-    let humanized = '';
     const sec = Math.floor(ms / 1000);
-  
+    const items = [];
     const addS = (value) => value > 1 ? 's' : '';
-    if (months > 0) humanized += `${months} month${addS(months)}, `;
-    if (weeks > 0) humanized += `${weeks} week${addS(weeks)}, `;
-    if (days > 0) humanized += `${days} day${addS(days)}, `;
-    if (hours > 0) humanized += `${hours} hour${addS(hours)}, `;
-    if (mins > 0) humanized += `${mins} minute${addS(mins)}, `;
-    if (sec > 0) humanized += `${sec} seconds`;
+
+    if (months > 0) items.push(`${months} month${addS(months)}`);
+    if (weeks > 0) items.push(`${weeks} week${addS(weeks)}, `);
+    if (days > 0) items.push(`${days} day${addS(days)}`);
+    if (hours > 0) items.push(`${hours} hour${addS(hours)}`);
+    if (mins > 0) items.push(`${mins} minute${addS(mins)}`);
+    if (sec > 0) items.push(`${sec} second${addS(sec)}`);
   
-    return humanized;
+    return items.join(', ');
   },
 
   /**

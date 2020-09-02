@@ -66,7 +66,7 @@ module.exports = class Logger {
     const seconds = escapeTime(now.getHours());
     const day = this.getNumberOrdinal(now.getDate());
 
-    return colors.gray(`[${MONTHS[now.getMonth()]} ${day === null ? now.getDate() : day}, ${now.getFullYear()} | ${hours}:${minutes}:${seconds} ${now.getHours() >= 12 ? 'PM' : 'AM'}]`);
+    return colors.gray(`[${MONTHS[now.getMonth()]} ${day === null ? now.getDate() : day}, ${now.getFullYear()} | ${hours}:${minutes}:${seconds}]`);
   }
 
   /**

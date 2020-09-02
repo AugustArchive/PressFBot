@@ -23,6 +23,7 @@
 const { Collection } = require('@augu/immutable');
 const { Timeout } = require('../../util/Constants');
 const Logger = require('../Logger');
+const Util = require('../../util');
 
 /**
  * Represents a [TimeoutsManager], which basically
@@ -60,28 +61,7 @@ module.exports = class TimeoutsManager {
     for (const id of all) {
       const value = await this.bot.redis.hget('timeouts', id);
       const start = Number(value);
-      const timeout = setTimeout(async() => {
-        const exists = await this.bot.redis.hexists('timeouts', id);
-        if (exists) {
-          this.logger.info(`Timeout for user ${id} exists, now clearing`);
-          await this.bot.redis.hdel('timeouts', id);
-  
-          const user = await this.bot.redis.hget('users', id);
-          const data = JSON.parse(user);
-  
-          const payload = JSON.stringify({ id, voted: false, times: data.times });
-          await this.bot.redis.hset('users', id, payload);
-  
-          const timer = this.timers.get(`timer:${id}`);
-          clearTimeout(timer);
-        } else {
-          this.logger.warn(`Timeout for user ${id} doesn't exist, still clearing this one so it won't bleed out`);
-          clearTimeout(timeout);
-        }
-      }, start - (Date.now() + Timeout));
-
-      if (this.timers.has(`timer:${id}`)) this.timers.delete(`timer:${id}`);
-      this.timers.set(`timer:${id}`, timeout);
+      this.createTimeout(`timeouts:${id}`, Math.abs((Date.now() + Timeout) - start));
     }
   }
 
@@ -92,27 +72,37 @@ module.exports = class TimeoutsManager {
   async apply(id) {
     const date = Date.now();
     await this.bot.redis.hset('timeouts', id, date);
+    this.createTimeout(`timeouts:${id}`, Timeout);
+  }
 
-    const timeout = setTimeout(async() => {
-      const exists = await this.bot.redis.hexists('timeouts', id);
-      if (exists) {
-        this.logger.info(`Timeout for user ${id} exists, now clearing`);
-        await this.bot.redis.hdel('timeouts', id);
+  /**
+   * Creates a new timeout
+   * @param {string} key The key to use
+   * @param {number} start The start time, if any
+   */
+  createTimeout(key, start) {
+    const timeout = setTimeout(() => {
+      this.bot.redis.hexists('timeouts', key.split(':')[1])
+        .then((exists) => {
+          if (this.timers.has(key) && exists) {
+            this.logger.info(`Timeout for user ${key.split(':')[1]} exists, now clearing...`);
+            this.bot.redis.hdel('timeouts', key.split(':')[1])
+              .then(() => this.logger.info(`Cleared timeout successfully for user ${key.split(':')[1]}`))
+              .catch(this.logger.error)
+              .finally(async() => {
+                const user = await this.bot.redis.hget('users', key.split(':')[1]);
+                const data = JSON.parse(user);
+                const payload = JSON.stringify({ id, voted: false, times: data.times });
 
-        const user = await this.bot.redis.hget('users', id);
-        const data = JSON.parse(user);
+                await this.bot.redis.hset('users', id, payload);
+                clearTimeout(this.timers.get(key));
+              });
+          }
+        }).catch(this.bot.logger.error);
+    }, start);
 
-        const payload = JSON.stringify({ id, voted: false, times: data.times });
-        await this.bot.redis.hset('users', id, payload);
-
-        const timer = this.timers.get(`timer:${id}`);
-        clearTimeout(timer);
-      } else {
-        this.logger.warn(`Timeout for user ${id} doesn't exist, still clearing this one so it won't bleed out`);
-        clearTimeout(timeout);
-      }
-    }, Timeout);
-
-    this.timers.set(`timer:${id}`, timeout);
+    timeout.unref();
+    this.timers.set(key, timeout);
+    this.logger.info(`Created timer ${key} for ${Util.humanize(start)}`);
   }
 };
