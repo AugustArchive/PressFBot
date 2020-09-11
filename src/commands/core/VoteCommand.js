@@ -22,6 +22,7 @@
 
 const { Support } = require('../../util/Constants');
 const { Command } = require('../../structures');
+const { humanize } = require('../../util');
 
 module.exports = class VoteCommand extends Command {
   constructor() {
@@ -36,15 +37,20 @@ module.exports = class VoteCommand extends Command {
    * @param {import('../../structures/Message')} ctx The command's context
    */
   async run(ctx) {
+    const data = await this.bot.redis.hget('users', ctx.sender.id);
+    const status = JSON.parse(data);
+
+    const message = status.voted ? `Vote is currently on-going and will be non-existent in **${humanize(Date.now() - status.expiresAt)}**` : 'You did not vote in the past 12 hours.';
     const embed = this.bot.getEmbed()
       .setTitle('[ Voting for PressFBot ]')
       .setImage('https://discord.boats/api/v2/widget/477594964742635531?type=png')
       .setDescription([
-        'You can vote for me on [**discord.boats**](https://discord.boats/bot/pressfbot)',
+        '> You can vote on [**discord.boats**](https://discord.boats/bot/pressfbot)!',
         '',
-        'Only perks you really get is that annoying pop-up to vote which comes 0.3% of the time (it can be disabled with legacy mode, `F legacy`)',
+        'If you do read this, please do so or remove the annoying pop up with the **legacy** command!',
+        'It helps with the bot very much since it\'s non-profit and always will be free.',
         '',
-        `Want to suggest more? Join my [support server](${Support}) and suggest some to my owner!`
+        `**Vote Status**: ${message}`
       ]);
 
     return ctx.embed(embed);

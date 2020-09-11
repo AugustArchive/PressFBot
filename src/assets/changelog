@@ -2,6 +2,8 @@
 > View live changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Update dependency **@augu/dotenv** from v1.1.0 -> v1.2.0
-- Fixed timeouts structure, which doesn't kill a timeout when the bot restarts
-- Miscellaneous development fixes
+- Dependency updates
+- Fix voting system to not actually work (i.e: won't cancel a timeout)
+
+Additions:
+- Added if you voted or not in the **vote** command

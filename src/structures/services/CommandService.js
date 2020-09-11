@@ -50,7 +50,7 @@ module.exports = class CommandService {
 
     let user;
     if (!(await this.bot.redis.hexists('users', msg.author.id))) {
-      const data = JSON.stringify({ id: msg.author.id, times: 0, voted: false });
+      const data = JSON.stringify({ id: msg.author.id, times: 0, voted: false, expiresAt: '' });
       await this.bot.redis.hset('users', msg.author.id, data);
 
       user = JSON.parse(await this.bot.redis.hget('users', msg.author.id));

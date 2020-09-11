@@ -24,6 +24,7 @@ const { Collection } = require('@augu/immutable');
 const { Timeout } = require('../../util/Constants');
 const Logger = require('../Logger');
 const Util = require('../../util');
+const { humanize } = require('../../util');
 
 /**
  * Represents a [TimeoutsManager], which basically
@@ -61,16 +62,16 @@ module.exports = class TimeoutsManager {
     for (const id of all) {
       const value = await this.bot.redis.hget('timeouts', id);
       const start = Number(value);
-      this.createTimeout(`timeouts:${id}`, Math.abs((Date.now() + Timeout) - start));
+      this.createTimeout(`timeouts:${id}`, start - Date.now() + Timeout);
     }
   }
 
   /**
    * Applies a new timeout
    * @param {string} id The user's ID
+   * @param {number} date The time
    */
-  async apply(id) {
-    const date = Date.now();
+  async apply(id, date) {
     await this.bot.redis.hset('timeouts', id, date);
     this.createTimeout(`timeouts:${id}`, Timeout);
   }
@@ -92,7 +93,7 @@ module.exports = class TimeoutsManager {
               .finally(async() => {
                 const user = await this.bot.redis.hget('users', key.split(':')[1]);
                 const data = JSON.parse(user);
-                const payload = JSON.stringify({ id, voted: false, times: data.times });
+                const payload = JSON.stringify({ id: key.split(':')[1], voted: false, times: data.times, expiresAt: '' });
 
                 await this.bot.redis.hset('users', id, payload);
                 clearTimeout(this.timers.get(key));

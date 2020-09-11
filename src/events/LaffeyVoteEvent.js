@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { Support } = require('../util/Constants');
+const { Support, Timeout } = require('../util/Constants');
 const { Event } = require('../structures');
 
 module.exports = class VoteEvent extends Event {
@@ -38,8 +38,18 @@ module.exports = class VoteEvent extends Event {
     this.bot.logger.info(`User ${user.username}#${user.discriminator} has voted for PressFBot, now at ${this.bot.webhook.requests.toLocaleString()} requests received`);
     
     const data = JSON.parse(await this.bot.redis.hget('users', user.id));
-    await this.bot.redis.hset('users', user.id, JSON.stringify({ id: user.id, voted: true, times: data.times + 1 }));
-    await this.bot.timeouts.apply(user.id);
+    const date = Date.now();
+
+    console.trace('added vote metadata');
+    await this.bot.redis.hset('users', user.id, JSON.stringify({ 
+      id: user.id, 
+      voted: true, 
+      times: data.times + 1,
+      expiresAt: date + Timeout
+    }));
+
+    console.trace('called apply on timeouts manager');
+    await this.bot.timeouts.apply(user.id, date);
 
     const u = this.bot.client.users.get(user.id);
     if (!u) return;
