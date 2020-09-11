@@ -2,8 +2,5 @@
 > View live changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Dependency updates
-- Fix voting system to not actually work (i.e: won't cancel a timeout)
-
-Additions:
-- Added if you voted or not in the **vote** command
+- Remove dev commands from being listed as "Most Used Command"
+- Fix URL for voting

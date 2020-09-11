@@ -45,7 +45,7 @@ module.exports = class VoteCommand extends Command {
       .setTitle('[ Voting for PressFBot ]')
       .setImage('https://discord.boats/api/v2/widget/477594964742635531?type=png')
       .setDescription([
-        '> You can vote on [**discord.boats**](https://discord.boats/bot/pressfbot)!',
+        '> You can vote on [**discord.boats**](https://discord.boats/bot/477594964742635531)!',
         '',
         'If you do read this, please do so or remove the annoying pop up with the **legacy** command!',
         'It helps with the bot very much since it\'s non-profit and always will be free.',

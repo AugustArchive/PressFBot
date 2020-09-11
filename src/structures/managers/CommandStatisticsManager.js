@@ -56,7 +56,7 @@ module.exports = class CommandStatisticsManager {
    * @param {import('../Command')} cmd The command
    */
   inc(cmd) {
-    if (cmd.name === 'shell' || cmd.name === 'exec') return;
+    if (cmd.category === 'System') return;
     if (!this.commandUsages.hasOwnProperty(cmd.name)) this.commandUsages[cmd.name] = 0;
 
     this.commandsExecuted++;
