@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  bot:
+    build: .
+    ports:
+      - '4200:4200'
+    networks:
+      - 'pressfbot'
+  redis:
+    image: 'redis:latest'
+    networks:
+      - 'pressfbot'
+    volumes:
+      - 'redis:/data'
+volumes:
+  redis:
+networks:
+  pressfbot:

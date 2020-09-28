@@ -24,8 +24,8 @@ const { promises: fs } = require('fs');
 const CommandService = require('../services/CommandService');
 const { Collection } = require('@augu/immutable');
 const { getPath } = require('../../util');
-const Logger = require('../Logger');
 const { join } = require('path');
+const Logger = require('../Logger');
 
 /**
  * Represents a manager for handling commands and type readers
@@ -93,22 +93,5 @@ module.exports = class CommandManager extends Collection {
         this.set(cmd.name, cmd);
       });
     }
-  }
-
-  /**
-   * Gets a type reader
-   * @param {string} id The type reader's ID
-   */
-  getTypeReader(id) {
-    if (!id) return undefined;
-    if (!id.includes('|')) return this.readers.get(id);
-
-    let type = this.readers.get(id);
-    if (type) return type;
-
-    type = new UnionTypeReader(this, id);
-    this.readers.set(id, type);
-
-    return type;
   }
 };

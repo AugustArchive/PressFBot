@@ -37,7 +37,7 @@ module.exports = class EmbedBuilder {
     this.footer = data.footer;
     this.color = data.color;
     this.fields = data.fields ? data.fields.map(clone) : [];
-    this.timestamp = new Date();
+    this.timestamp = data.timestamp;
     this.url = data.url;
   }
 

@@ -91,6 +91,7 @@ module.exports = class EventsManager extends Collection {
         try {
           await event.emit(...args);
         } catch(ex) {
+          if (this.bot.sentry !== undefined) this.bot.sentry.capture(ex);
           this.bot.logger.error(`Unable to run event "${event.event}" in emitter "${event.emitter}"`, ex);
         }
       };

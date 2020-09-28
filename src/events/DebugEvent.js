@@ -22,24 +22,17 @@
 
 const { Event } = require('../structures');
 
-module.exports = class ReadyEvent extends Event {
+module.exports = class GuildJoinEvent extends Event {
   constructor() {
-    super('eris', 'ready');
+    super('eris', 'debug');
   }
 
   /**
-   * Emits when the bot has fully connected to Discord
+   * Emits when any debug information has been made by Eris (only used in Development)
+   * @param {string} message The message
    */
-  async emit() {
-    this.bot.logger.info(`Connected to Discord as ${this.bot.client.user.username}#${this.bot.client.user.discriminator} with ${this.bot.client.guilds.size} guilds!`);
-    this.bot.client.editStatus('online', {
-      name: `f in chat in ${this.bot.client.guilds.size.toLocaleString()} guilds`,
-      type: 2
-    });
-
-    this.bot.ready = true;
-    
-    await this.bot.timeouts.reapply();
-    await this.bot.botlists.start();
+  async emit(message) {
+    if (this.bot.config.env !== 'development') return;
+    if (this.bot.config.debugInfo) this.bot.logger.debug(message);
   }
 };

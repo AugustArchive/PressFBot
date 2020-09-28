@@ -33,7 +33,7 @@ if (!isNode10()) {
 }
 
 if (!existsSync(join(__dirname, '..', '.env'))) {
-  logger.fatal('Missing .env directory in the root directory.');
+  logger.fatal('Missing .env file in root directory');
   process.exit(1);
 }
 
@@ -42,25 +42,25 @@ const config = parse({
   populate: false,
   file: join(__dirname, '..', '.env'),
   schema: {
-    DATABASE_USERNAME: 'string',
-    DATABASE_PASSWORD: 'string',
     REDIS_PASSWORD: {
       type: 'string',
       default: undefined
+    },
+    DEBUG_INFO: {
+      type: 'boolean',
+      default: false
     },
     REDIS_DB_ID: {
       type: 'int',
       default: 2
     },
-    DATABASE_HOST: 'string',
-    DATABASE_PORT: 'int',
+    SENTRY_DSN: {
+      type: 'string',
+      default: undefined
+    },
     LAFFEY_SECRET: {
       type: 'string',
       default: null
-    },
-    DATABASE_NAME: {
-      type: 'string',
-      default: 'pressfbot'
     },
     REDIS_HOST: {
       type: 'string',
@@ -99,7 +99,11 @@ const config = parse({
   }
 });
 
+if (config.NODE_ENV === 'development') logger.warn('You\'re running a development instance of PressFBot, report bugs if you find any: https://github.com/auguwu/PressFBot');
+
 const bot = new PressFBot(config);
+if (bot.docker) logger.warn('Running bot as a Docker container, this is in prototype stages!');
+
 bot.start()
   .then(() => logger.info('PressFBot is all set.'))
   .catch((error) => {

@@ -95,7 +95,7 @@ module.exports = class Logger {
 
   /**
    * Gets the level's text color
-   * @param {'info' | 'error' | 'warn' | 'fatal' | 'database' | 'shard'} level The level
+   * @param {'info' | 'error' | 'warn' | 'fatal' | 'debug' | 'database' | 'shard'} level The level
    * @param {number} [shardID=0] The shard's ID
    */
   getLevelText(level, shardID) {
@@ -104,7 +104,8 @@ module.exports = class Logger {
     let lvlText;
     switch (level) {
       case 'info': lvlText = hex('#93D3D3', '[Info]'); break;
-      case 'warn': lvlText = hex('#FFFF75', '[Warning]'); break;
+      case 'warn': lvlText = hex('#FFFF75', '[Warn]'); break;
+      case 'debug': lvlText = hex('#987DC5', '[Debug]'); break;
       case 'error':
       case 'fatal': lvlText = hex('#FF7575', `[${level === 'error' ? 'Error' : 'Fatal'}]`); break;
       case 'shard': lvlText = hex('#F44C8D', `[Shard #${shardID}]`); break;
@@ -123,12 +124,12 @@ module.exports = class Logger {
     const level = this.getLevelText('shard', shardID);
     const name = hex(NAME_COLOR, `[${this.title}]`);
 
-    process.stdout.write(`${this.getDate()} ${level} ${name} > ${this._formatMessages(...messages)}\n`);
+    process.stdout.write(`${this.getDate()} ${name} ${level} -> ${this._formatMessages(...messages)}\n`);
   }
 
   /**
    * Writes to the console
-   * @param {'info' | 'error' | 'warn' | 'fatal' | 'database'} level The level to use
+   * @param {'info' | 'error' | 'warn' | 'fatal' | 'database' | 'debug'} level The level to use
    * @param {...any} messages The messages to print
    */
   write(level, ...messages) {
@@ -136,7 +137,7 @@ module.exports = class Logger {
     const name = hex(NAME_COLOR, `[${this.title}]`);
     const message = this._formatMessages(...messages);
 
-    process.stdout.write(`${this.getDate()} ${lvlText} ${name} > ${message}\n`);
+    process.stdout.write(`${this.getDate()} ${name} ${lvlText} -> ${message}\n`);
   }
 
   /**
@@ -169,6 +170,14 @@ module.exports = class Logger {
    */
   fatal(...messages) {
     return this.write('fatal', ...messages);
+  }
+
+  /**
+   * Writes to the console as the `DEBUG` level
+   * @param {...any} messages The messages to send
+   */
+  debug(...messages) {
+    return this.write('debug', ...messages);
   }
 
   /**

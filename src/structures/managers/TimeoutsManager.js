@@ -24,7 +24,6 @@ const { Collection } = require('@augu/immutable');
 const { Timeout } = require('../../util/Constants');
 const Logger = require('../Logger');
 const Util = require('../../util');
-const { humanize } = require('../../util');
 
 /**
  * Represents a [TimeoutsManager], which basically

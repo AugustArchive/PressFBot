@@ -122,6 +122,7 @@ module.exports = class CommandService {
             '```'
           ].join('\n'));
 
+        if (this.bot.sentry !== undefined) this.bot.sentry.capture(ex);
         this.bot.logger.error(`Unable to run ${command.name}:`, ex);
         return ctx.embed(embed);
       }

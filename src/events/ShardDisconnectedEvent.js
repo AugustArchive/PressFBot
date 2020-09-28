@@ -33,7 +33,6 @@ module.exports = class ShardDisconnectEvent extends Event {
    * @param {number} shard The shard ID
    */
   async emit(error, shard) {
-    const awaiting = error === undefined;
-    this.bot.logger.shard(shard, `Disconnected from Discord. (awaiting: ${awaiting ? 'yes' : 'no'}...)`, error || 'Connection was reset');
+    this.bot.logger.shard(shard, 'Shard has disconnect from Discord, view below for trace:', error || new Error('Connection was reset'));
   }
 };

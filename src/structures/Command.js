@@ -61,12 +61,6 @@ module.exports = class Command {
     this.usage = info.hasOwnProperty('usage') ? info.usage : '';
 
     /**
-     * The command's external arguments
-     * @type {import('./arguments/Argument').ArgumentInfo[]}
-     */
-    this.args = info.hasOwnProperty('args') ? info.args : [];
-
-    /**
      * The command's name
      * @type {string}
      */

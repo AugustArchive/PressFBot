@@ -2,5 +2,11 @@
 > View live changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Remove dev commands from being listed as "Most Used Command"
-- Fix URL for voting
+- Remove useless code that isn't used
+- Check if the bot isn't ready to send events
+
+Additions:
+- Support Sentry
+- Support Docker
+- Added `--depth` flag to `eval` command
+- Added editing message support

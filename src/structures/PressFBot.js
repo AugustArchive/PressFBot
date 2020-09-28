@@ -33,6 +33,7 @@ const { Client } = require('eris');
 const { Server } = require('laffey');
 const constants = require('../util/Constants');
 const Logger = require('./Logger');
+const SentryManager = require('./managers/SentryManager');
 
 module.exports = class PressFBot {
   /**
@@ -62,6 +63,8 @@ module.exports = class PressFBot {
         boats: config.hasOwnProperty('BOATS_TOKEN') ? config.BOATS_TOKEN : undefined
       },
       voteLogUrl: config.VOTE_LOGS_URL,
+      sentryDSN: config.SENTRY_DSN,
+      debugInfo: config.DEBUG_INFO,
       owners: config.OWNERS,
       token: config.TOKEN,
       env: config.NODE_ENV
@@ -101,7 +104,15 @@ module.exports = class PressFBot {
      * Logger instance
      * @type {Logger}
      */
-    this.logger = new Logger('PressFBot');
+    this.logger = new Logger('Bot');
+
+    /**
+     * Sentry manager if enabled
+     * @type {import('./managers/SentryManager')}
+     */
+    this.sentry = config.SENTRY_DSN !== undefined 
+      ? new SentryManager(this) 
+      : undefined;
 
     /**
      * Discord client
@@ -114,12 +125,24 @@ module.exports = class PressFBot {
     });
 
     /**
+     * If the bot is running under a Docker container
+     * @type {boolean}
+     */
+    this.docker = process.env.hasOwnProperty('DOCKER_CONTAINER');
+
+    /**
      * The webhook service (provided by [Laffey])
      * @type {import('laffey').Server}
      */
-    this.webhook = this.config.laffey.enabled ? new Server(this.config.laffey.port, '/webhook', {
-      token: this.config.laffey.secret
-    }) : undefined;
+    this.webhook = this.config.laffey.enabled 
+      ? new Server(this.config.laffey.port, '/webhook', { token: this.config.laffey.secret }) 
+      : undefined;
+
+    /**
+     * If the bot is ready to be used with Discord
+     * @type {boolean}
+     */
+    this.ready = false;
 
     /**
      * Redis client
@@ -154,12 +177,13 @@ module.exports = class PressFBot {
 
     this.logger.info('Loaded all miscellaneous stuff');
     if (this.webhook !== undefined) this.webhook.listen();
+    if (this.sentry !== undefined) this.sentry.install();
 
     await this.client.connect()
       .then(() => {
         this.logger.info('Now connecting through tubes with Discord O_o');
         this.client.editStatus('idle', {
-          name: 'watching the systems boot up... ✨',
+          name: 'the systems boot up... ✨',
           type: 3
         });
       })
@@ -199,6 +223,8 @@ module.exports = class PressFBot {
  * @prop {boolean} LAFFEY_ENABLED If we should use [Laffey] or not
  * @prop {string} VOTE_LOGS_URL The vote logs url
  * @prop {string} [BOATS_TOKEN] The token to post to discord.boats
+ * @prop {string} [SENTRY_DSN] The DSN url for Sentry, optional
+ * @prop {boolean} [DEBUG_INFO] If we should log debug info, optional
  * @prop {string} LAFFEY_SECRET The secret to authenicate requests for [Laffey]
  * @prop {number} LAFFEY_PORT The port to create a new [Laffey] instance
  * @prop {string} REDIS_HOST The host to connect to Redis
@@ -209,6 +235,8 @@ module.exports = class PressFBot {
  * 
  * @typedef {object} Configuration
  * @prop {string} voteLogUrl The vote logs url
+ * @prop {string} sentryDSN The sentry DSN, optional
+ * @prop {boolean} debugInfo If we should log debug info, optional
  * @prop {BotlistConfig} botlists Botlists configuration OwO
  * @prop {LaffeyConfig} laffey The [Laffey] configuration
  * @prop {RedisConfig} redis The redis configuration

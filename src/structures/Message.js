@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 
-const MessageCollector = require('./MessageCollector');
 const ArgumentParser = require('./parsers/ArgumentParser');
 const { unembedify } = require('../util');
 const EmbedBuilder = require('./EmbedBuilder');
@@ -49,16 +48,6 @@ module.exports = class CommandMessage {
    * @param {string[]} args The arguments provided by da user UwU
    */
   constructor(bot, msg, args) {
-    /**
-     * The message collector for [CommandMessage.awaitMessage]
-     * @type {import('./MessageCollector')}
-     */
-    this.collector = new MessageCollector(bot, {
-      channelID: msg.channel.id,
-      authorID: msg.author.id,
-      timeout: 60 * 1000
-    });
-
     /**
      * The message
      * @type {import('eris').Message<import('eris').TextChannel>}
@@ -99,7 +88,6 @@ module.exports = class CommandMessage {
    */
   embed(content) {
     const embed = resolveEmbed(content);
-    const bot = this.message.channel.permissionsOf(this.bot.client.user.id);
 
     if (this.guild) {
       if (!this.self.permission.has('embedLinks')) {
@@ -124,14 +112,6 @@ module.exports = class CommandMessage {
         }
       });
     }
-  }
-
-  /**
-   * Awaits an message in 60 seconds and returns it
-   * @param {(m: import('eris').Message<import('eris').TextChannel>) => boolean} filter The filter to use
-   */
-  awaitMessage(filter) {
-    return this.collector.awaitMessage(filter);
   }
 
   /**
