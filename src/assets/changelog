@@ -2,11 +2,6 @@
 > View live changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Remove useless code that isn't used
-- Check if the bot isn't ready to send events
-
-Additions:
-- Support Sentry
-- Support Docker
-- Added `--depth` flag to `eval` command
-- Added editing message support
+- Force restart the bot when:
+  - The bot loses connection with Discord
+  - We receive a error code 1001 (it's just an empty string)

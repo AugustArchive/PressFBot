@@ -115,11 +115,17 @@ process.on('uncaughtException', async(error) => {
   logger.error('Received an uncaught exception:', error);
 
   // fuck eris man istg
-  if (error.message.includes('by peer') || (error.code && error.code === 1001)) {
+  if (
+    error.message.includes('by peer') || 
+    error.message.includes('lost connection') || 
+    (error.code && error.code === 1001)
+  ) {
     logger.info('Restarting PressFBot...');
+
+    bot.client.disconnect({ reconnect: false });
     await bot.client.connect()
-      .then(() => logger.info('Reconnecting through tubes...'))
-      .catch(logger.error);
+      .then(() => logger.info('Force restarted PressFBot'))
+      .catch(error => logger.error('Unable to force-restart PressFBot', error));
   }
 });
 
