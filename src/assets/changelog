@@ -1,7 +1,9 @@
-> Current Commit: **[$COMMIT$](https://github.com/auguwu/PressFBot/commit/$HASH$)**
+> Current Commit: [**$COMMIT$**]($HASH:URL$)
 > View all changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
-- Force restart the bot when:
-  - The bot loses connection with Discord
-  - We receive a error code 1001 (it's just an empty string)
+- Fix miscellaneous grammar issues
+
+Additions:
+- Added commit URL in changelog
+- Added `ping` command

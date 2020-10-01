@@ -104,7 +104,7 @@ module.exports = class PressFBot {
      * Logger instance
      * @type {Logger}
      */
-    this.logger = new Logger('Bot');
+    this.logger = new Logger('PressFBot');
 
     /**
      * Sentry manager if enabled
@@ -167,21 +167,15 @@ module.exports = class PressFBot {
    * Starts the bot
    */
   async start() {
-    this.logger.info('Loading all miscellaneous stuff...');
-
-    this.redis.once('ready', () => this.logger.info('Connected to Redis!'));
-    this.redis.on('wait', () => this.logger.warn('Redis has disconnected unexpectly! Waiting for a new connection...'));
-
     await this.commands.load();
     await this.events.load();
 
-    this.logger.info('Loaded all miscellaneous stuff');
     if (this.webhook !== undefined) this.webhook.listen();
     if (this.sentry !== undefined) this.sentry.install();
 
     await this.client.connect()
       .then(() => {
-        this.logger.info('Now connecting through tubes with Discord O_o');
+        this.logger.info('Now connecting through tubes with Discord');
         this.client.editStatus('idle', {
           name: 'the systems boot up... ✨',
           type: 3

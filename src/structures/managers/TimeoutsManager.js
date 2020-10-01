@@ -94,7 +94,7 @@ module.exports = class TimeoutsManager {
                 const data = JSON.parse(user);
                 const payload = JSON.stringify({ id: key.split(':')[1], voted: false, times: data.times, expiresAt: '' });
 
-                await this.bot.redis.hset('users', id, payload);
+                await this.bot.redis.hset('users', key.split(':')[1], payload);
                 clearTimeout(this.timers.get(key));
               });
           }
