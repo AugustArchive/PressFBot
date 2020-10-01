@@ -72,7 +72,7 @@ module.exports = class SentryManager {
       scope.setTag('system.os', process.platform);
     });
 
-    this.logger.info('Installed Sentry with tags! Call SentryManager.testException to send a test exception!');
+    this.logger.info('Installed Sentry successfully.');
   }
 
   /**

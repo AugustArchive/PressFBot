@@ -56,7 +56,9 @@ module.exports = class ChangelogCommand extends Command {
       if (i === 0) {
         lines.push(logs[i]
           .replace('$COMMIT$', getCommitHash(false))
-          .replace('$HASH$', getCommitHash(true)));
+          .replace('$HASH:URL$', `https://github.com/auguwu/PressFBot/commit/${getCommitHash(true)}`)
+          .trim());
+
         continue;
       }
 

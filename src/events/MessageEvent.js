@@ -32,6 +32,8 @@ module.exports = class ReadyEvent extends Event {
    * @param {import('eris').Message} msg The message
    */
   async emit(msg) {
+    if (!this.bot.ready) return;
+
     return this.bot.commands.service.invoke(msg);
   }
 };

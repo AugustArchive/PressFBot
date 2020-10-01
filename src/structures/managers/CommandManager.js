@@ -91,6 +91,7 @@ module.exports = class CommandManager extends Collection {
         cmd.init(this.bot);
   
         this.set(cmd.name, cmd);
+        this.logger.info(`Initialised command "${cmd.name}"`);
       });
     }
   }

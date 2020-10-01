@@ -20,19 +20,19 @@
  * SOFTWARE.
  */
 
-const { Event } = require('../structures');
+const { Event, Logger } = require('../structures');
 
-module.exports = class ErrorEvent extends Event {
+module.exports = class RedisWaitEvent extends Event {
   constructor() {
-    super('laffey', 'error');
+    super('redis', 'wait');
+
+    this.logger = new Logger('Redis');
   }
 
   /**
-   * Emits when a user failed a request
-   * @param {string} message The message
+   * Emits when the bot has fully connected to Discord
    */
-  async emit(message) {
-    if (this.bot.sentry !== undefined) this.bot.sentry.capture(new Error(`Laffey: ${message}`));
-    this.bot.logger.error(new Error(message));
+  emit() {
+    this.logger.warn('Redis has un-expectedly disconnected, awaiting new connection...');
   }
 };

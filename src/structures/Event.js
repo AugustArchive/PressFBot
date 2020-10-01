@@ -29,7 +29,7 @@
 module.exports = class Event {
   /**
    * Creates a new [Event] class.
-   * @param {'laffey' | 'eris'} emitter The emitter to use
+   * @param {'laffey' | 'eris' | 'redis'} emitter The emitter to use
    * @param {string} event The event name
    */
   constructor(emitter, event) {
@@ -41,7 +41,7 @@ module.exports = class Event {
 
     /**
      * The event emitter to use
-     * @type {'laffey' | 'eris'}
+     * @type {'laffey' | 'eris' | 'redis'}
      */
     this.emitter = emitter;
   }

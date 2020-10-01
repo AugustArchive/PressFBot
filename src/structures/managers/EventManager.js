@@ -95,12 +95,25 @@ module.exports = class EventsManager extends Collection {
           this.bot.logger.error(`Unable to run event "${event.event}" in emitter "${event.emitter}"`, ex);
         }
       };
+        
+      let emitter;
+      switch (event.emitter) {
+        case 'laffey': 
+          emitter = this.bot.webhook;
+          break;
+        
+        case 'redis':
+          emitter = this.bot.redis;
+          break;
 
-      const emitter = event.emitter === 'eris' 
-        ? this.bot.client 
-        : event.emitter === 'laffey' 
-          ? this.bot.webhook 
-          : undefined;
+        case 'eris':
+          emitter = this.bot.client;
+          break;
+
+        default:
+          emitter = undefined;
+          break;
+      }
 
       if (emitter === undefined) {
         this.logger.error(`Invalid emitter "${event.emitter}"`);
@@ -109,6 +122,7 @@ module.exports = class EventsManager extends Collection {
 
       emitter.on(event.event, wrapper);
       this.set(event.event, event);
+      this.logger.info(`Initialised event "${event.event}" (strat: ${event.emitter})`);
     }
   }
 };

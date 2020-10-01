@@ -31,9 +31,9 @@ module.exports = {
    * @param {boolean} full Whether to get the full commit hash or only the first 8 characters.
    * @returns {string} A string of the hash or `null` if it can't find the .git folder
    */
-  getCommitHash: (full) => {
+  getCommitHash: (full = false) => {
     const hash = execSync('git rev-parse HEAD', { encoding: 'utf8' });
-    return full ? hash : hash.slice(0, 8);
+    return (full ? hash : hash.slice(0, 8)).trim();
   },
 
   /**
@@ -221,7 +221,7 @@ module.exports = {
     if (mins > 0) items.push(`${mins} minute${addS(mins)}`);
     if (sec > 0) items.push(`${sec} second${addS(sec)}`);
   
-    return items.join(', ');
+    return items.filter(Boolean).join(', ');
   },
 
   /**
