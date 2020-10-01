@@ -1,5 +1,5 @@
-> Current Commit: **$COMMIT$**
-> View live changes [here](https://github.com/auguwu/PressFBot)
+> Current Commit: **[$COMMIT$](https://github.com/auguwu/PressFBot/commit/$HASH$)**
+> View all changes [here](https://github.com/auguwu/PressFBot)
 
 Fixes:
 - Force restart the bot when:

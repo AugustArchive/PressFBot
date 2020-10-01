@@ -26,7 +26,7 @@ const { Command } = require('../../structures');
 module.exports = class HelpCommand extends Command {
   constructor() {
     super({
-      description: 'Gives a list of PressFBot\'s avaliable commands or gives documentation on a command',
+      description: 'Gives a list of PressFBot\'s avaliable commands or gives more information on how to use a specific command',
       aliases: ['halp', 'h', 'cmds', 'commands'],
       usage: '[command]',
       name: 'help'
@@ -62,10 +62,10 @@ module.exports = class HelpCommand extends Command {
       const embed = this.bot.getEmbed()
         .setAuthor(`[ ${this.bot.client.user.username}#${this.bot.client.user.discriminator} | Commands List ]`, 'https://pressfbot.augu.dev', this.bot.client.user.dynamicAvatarURL('png', 1024))
         .setDescription([
-          'To use a command, run **F <command>** (`<command>` being the command you wanna execute from this list)',
+          'To use a command, run **F <command>** (`<command>` being the command you want to execute from this list)',
           `Example: ${random.format()}`,
           '',
-          'To get documentation of a command, run **F help <command>** (`<command>` being the command you want documentation from)',
+          'To get documentation of a command, run **F help <command>** (`<command>` being the command you want more information on)',
           `Example: F help ${random.name}`
         ]);
 
@@ -79,7 +79,7 @@ module.exports = class HelpCommand extends Command {
       const name = ctx.args.get(0);
       const command = this.bot.commands.filter(c => c.name === name || c.aliases.includes(name));
 
-      if (!command.length) return ctx.send(`Command **${name}** wasn't found?`);
+      if (!command.length) return ctx.send(`Command **${name}** wasn't found.`);
       else {
         const embed = this.bot.getEmbed()
           .setTitle(`[ Command "${command[0].name}" ]`)

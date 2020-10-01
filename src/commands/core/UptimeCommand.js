@@ -37,6 +37,6 @@ module.exports = class UptimeCommand extends Command {
    */
   async run(ctx) {
     const time = Math.floor(process.uptime()) * 1000;
-    return ctx.send(`:gear: **${humanize(time)}**`);
+    return ctx.send(`:gear: I have been alive for **${humanize(time)}**`);
   }
 };
