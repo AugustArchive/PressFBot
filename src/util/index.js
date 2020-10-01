@@ -27,12 +27,13 @@ const { execSync } = require('child_process');
  */
 module.exports = {
   /**
-   * Gets the latest commit hash
+   * Gets the latest commit hash.
+   * @param {boolean} full Whether to get the full commit hash or only the first 8 characters.
    * @returns {string} A string of the hash or `null` if it can't find the .git folder
    */
-  getCommitHash: () => {
+  getCommitHash: (full) => {
     const hash = execSync('git rev-parse HEAD', { encoding: 'utf8' });
-    return hash.slice(0, 8);
+    return full ? hash : hash.slice(0, 8);
   },
 
   /**

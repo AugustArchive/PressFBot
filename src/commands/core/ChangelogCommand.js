@@ -54,8 +54,9 @@ module.exports = class ChangelogCommand extends Command {
 
     for (let i = 0; i < logs.length; i++) {
       if (i === 0) {
-        const line = logs[i].replace('$COMMIT$', getCommitHash());
-        lines.push(line);
+        lines.push(logs[i]
+          .replace('$COMMIT$', getCommitHash(false))
+          .replace('$HASH$', getCommitHash(true)));
         continue;
       }
 

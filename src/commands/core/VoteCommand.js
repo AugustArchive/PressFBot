@@ -48,7 +48,7 @@ module.exports = class VoteCommand extends Command {
         '> You can vote on [**discord.boats**](https://discord.boats/bot/477594964742635531)!',
         '',
         'If you do read this, please do so or remove the annoying pop up with the **legacy** command!',
-        'It helps with the bot very much since it\'s non-profit and always will be free.',
+        'It helps with the bot since it\'s non-profit and always will be free.',
         '',
         `**Vote Status**: ${message}`
       ]);
