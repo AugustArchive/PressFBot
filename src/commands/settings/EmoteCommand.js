@@ -25,7 +25,7 @@ const { Command } = require('../../structures');
 module.exports = class EmoteCommand extends Command {
   constructor() {
     super({
-      description: 'Sets a custom emote when you press f in chat',
+      description: 'Sets a custom emote when you press F in chat',
       category: 'Settings',
       aliases: ['emoji', 'set-emote'],
       usage: '<emoji>',
@@ -38,7 +38,7 @@ module.exports = class EmoteCommand extends Command {
    * @param {import('../../structures/Message')} ctx The command's context
    */
   async run(ctx) {
-    if (!ctx.member.permission.has('manageGuild')) return ctx.send('You are missing the **Manage Server** permission');
+    if (!ctx.member.permission.has('manageGuild')) return ctx.send('You are missing the **Manage Server** permission!');
     if (!ctx.args.has(0)) return ctx.send('Missing emote argument');
 
     const emote = ctx.args.get(0);

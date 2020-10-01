@@ -26,7 +26,7 @@ const { Command } = require('../../structures');
 module.exports = class InviteCommand extends Command {
   constructor() {
     super({
-      description: 'Gives you an invite link or my support server!',
+      description: 'Get my invite and support server links!',
       aliases: ['inviteme'],
       name: 'invite'
     });

@@ -26,7 +26,7 @@ const util = require('../../util');
 module.exports = class ShardInfoCommand extends Command {
   constructor() {
     super({
-      description: 'Shows information about the shards running',
+      description: 'Shows information about the shards currently spawned',
       aliases: ['shards', 'shard', 'si'],
       name: 'shardinfo'
     });
