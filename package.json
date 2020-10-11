@@ -20,7 +20,7 @@
     "common-tags": "1.8.0",
     "eris": "0.13.3",
     "ioredis": "4.17.3",
-    "laffey": "1.0.1",
+    "laffey": "1.0.2",
     "leeks.js": "0.0.9"
   },
   "devDependencies": {
