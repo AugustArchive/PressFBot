@@ -1,12 +1,14 @@
 {
   "name": "@august/pressfbot",
   "description": "Press F in chat bois",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "main": "build/bot.js",
   "license": "MIT",
   "repository": "https://github.com/auguwu/PressFBot",
   "author": "Chris \"August\" Hernandez <august@augu.dev>",
   "scripts": {
+    "docker:build": "docker build . -t pressfbot:latest",
+    "docker:run": "docker-compose up",
     "prepare": "npm run lint",
     "start": "cd src && node bot.js",
     "lint": "eslint src --ext .js --fix"
