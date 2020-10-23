@@ -21,7 +21,7 @@
     "@sentry/tracing": "5.27.1",
     "common-tags": "1.8.0",
     "eris": "0.13.3",
-    "ioredis": "4.17.3",
+    "ioredis": "4.19.0",
     "laffey": "1.0.4",
     "leeks.js": "0.0.9"
   },
