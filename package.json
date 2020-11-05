@@ -20,7 +20,7 @@
     "@sentry/node": "5.27.3",
     "@sentry/tracing": "5.27.3",
     "common-tags": "1.8.0",
-    "eris": "0.13.3",
+    "eris": "0.14.0",
     "ioredis": "4.19.2",
     "laffey": "1.0.4",
     "leeks.js": "0.0.9"
