@@ -36,14 +36,14 @@ module.exports = class VoteEvent extends Event {
   async emit(bot, user) {
     if (bot.name !== 'PressFBot') return;
     this.bot.logger.info(`User ${user.username}#${user.discriminator} has voted for PressFBot, now at ${this.bot.webhook.requests.toLocaleString()} requests received`);
-    
+
     const data = JSON.parse(await this.bot.redis.hget('users', user.id));
     const date = Date.now();
 
     console.trace('added vote metadata');
-    await this.bot.redis.hset('users', user.id, JSON.stringify({ 
-      id: user.id, 
-      voted: true, 
+    await this.bot.redis.hset('users', user.id, JSON.stringify({
+      id: user.id,
+      voted: true,
       times: data.times + 1,
       expiresAt: date + Timeout
     }));

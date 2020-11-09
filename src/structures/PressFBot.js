@@ -75,7 +75,7 @@ module.exports = class PressFBot {
      * @type {CommandStatisticsManager}
      */
     this.statistics = new CommandStatisticsManager();
-    
+
     /**
      * Manages all timeouts for votes
      * @type {TimeoutsManager}
@@ -110,8 +110,8 @@ module.exports = class PressFBot {
      * Sentry manager if enabled
      * @type {import('./managers/SentryManager')}
      */
-    this.sentry = config.SENTRY_DSN !== undefined 
-      ? new SentryManager(this) 
+    this.sentry = config.SENTRY_DSN !== undefined
+      ? new SentryManager(this)
       : undefined;
 
     /**
@@ -134,8 +134,8 @@ module.exports = class PressFBot {
      * The webhook service (provided by [Laffey])
      * @type {import('laffey').Server}
      */
-    this.webhook = this.config.laffey.enabled 
-      ? new Server(this.config.laffey.port, '/webhook', { token: this.config.laffey.secret }) 
+    this.webhook = this.config.laffey.enabled
+      ? new Server(this.config.laffey.port, '/webhook', { token: this.config.laffey.secret })
       : undefined;
 
     /**
@@ -201,7 +201,7 @@ module.exports = class PressFBot {
    */
   dispose() {
     if (this.webhook !== undefined) this.webhook.close();
-    
+
     this.commands.clear();
     this.events.clear();
     this.client.disconnect({ reconnect: false });
@@ -226,7 +226,7 @@ module.exports = class PressFBot {
  * @prop {'development' | 'production'} NODE_ENV The environment
  * @prop {string[]} OWNERS The owners of the bot
  * @prop {string} TOKEN The token to authenicate to Discord
- * 
+ *
  * @typedef {object} Configuration
  * @prop {string} voteLogUrl The vote logs url
  * @prop {string} sentryDSN The sentry DSN, optional
@@ -237,17 +237,17 @@ module.exports = class PressFBot {
  * @prop {string[]} owners The owners of the bot
  * @prop {string} token The token to authenicate to Discord
  * @prop {'development' | 'production'} env The environment
- * 
+ *
  * @typedef {object} RedisConfig
  * @prop {string} [password] The password (optional) to connect to Redis
  * @prop {string} host The host to connect to Redis
  * @prop {number} port The port to connect to Redis
- * 
+ *
  * @typedef {object} LaffeyConfig
  * @prop {boolean} enabled If we should use [Laffey] or not
  * @prop {string} secret The secret to authenicate requests for [Laffey]
  * @prop {number} port The port to create a new [Laffey] instance
- * 
+ *
  * @typedef {object} BotlistConfig
  * @prop {string} [boats] The discord.boats token
  */

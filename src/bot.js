@@ -116,8 +116,8 @@ process.on('uncaughtException', async(error) => {
 
   // fuck eris man istg
   if (
-    error.message.includes('by peer') || 
-    error.message.includes('lost connection') || 
+    error.message.includes('by peer') ||
+    error.message.includes('lost connection') ||
     (error.code && error.code === 1001)
   ) {
     logger.info('Restarting PressFBot...');

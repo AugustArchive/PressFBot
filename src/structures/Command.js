@@ -66,7 +66,7 @@ module.exports = class Command {
      */
     this.name = info.name;
   }
-  
+
   /**
    * Adds `bot` to the command's constructor
    * @param {import('./PressFBot')} bot The bot instance

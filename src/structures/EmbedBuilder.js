@@ -61,7 +61,7 @@ module.exports = class EmbedBuilder {
 
   /**
    * Sets an description
-   * @param {string | string[]} text 
+   * @param {string | string[]} text
    */
   setDescription(text) {
     this.description = resolveString(text);
@@ -174,23 +174,23 @@ module.exports = class EmbedBuilder {
  * @prop {number} [color] The color
  * @prop {'rich'} [type] The type
  * @param {string} [url] The url
- * 
+ *
  * @typedef {Object} EmbedAuthor
  * @prop {string} name The name
  * @prop {string} [url] The URL
  * @prop {string} [icon_url] The icon URL
- * 
+ *
  * @typedef {Object} EmbedThumbnail
  * @prop {string} [url] The url
- * 
+ *
  * @typedef {Object} EmbedImage
  * @prop {string} [url] The URL
- * 
+ *
  * @typedef {Object} EmbedField
  * @prop {string} name The name
  * @prop {string} value The value
  * @prop {string} [inline] The inline boolean
- * 
+ *
  * @typedef {Object} EmbedFooter
  * @prop {string} text The text
  * @prop {string} [icon_url] The icon URL

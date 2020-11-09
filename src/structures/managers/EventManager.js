@@ -1,16 +1,16 @@
 /**
  * Copyright (c) 2020 August
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -80,7 +80,7 @@ module.exports = class EventsManager extends Collection {
       /** @type {import('../Event')} */
       const event = new Event();
       event.init(this.bot);
-      
+
       // now we add it to the emitter lmao
       if (event.emitter === 'laffey' && !this.bot.webhook) {
         this.logger.error(`Event "${event.event}" requires the webhook service but it's not enabled?`);
@@ -95,13 +95,13 @@ module.exports = class EventsManager extends Collection {
           this.bot.logger.error(`Unable to run event "${event.event}" in emitter "${event.emitter}"`, ex);
         }
       };
-        
+
       let emitter;
       switch (event.emitter) {
-        case 'laffey': 
+        case 'laffey':
           emitter = this.bot.webhook;
           break;
-        
+
         case 'redis':
           emitter = this.bot.redis;
           break;

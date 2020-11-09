@@ -11,17 +11,14 @@
     "docker:run": "docker-compose up",
     "prepare": "npm run lint",
     "start": "cd src && node bot.js",
-    "lint": "eslint src --ext .js --fix"
+    "lint": "eslint src lib --ext .js --fix"
   },
   "dependencies": {
     "@augu/dotenv": "1.2.0",
     "@augu/immutable": "0.5.0",
     "@augu/orchid": "1.8.1",
     "@sentry/node": "5.27.3",
-    "@sentry/tracing": "5.27.3",
     "common-tags": "1.8.0",
-    "eris": "0.14.0",
-    "ioredis": "4.19.2",
     "laffey": "1.0.5",
     "leeks.js": "0.0.9"
   },

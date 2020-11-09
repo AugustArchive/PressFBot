@@ -128,7 +128,7 @@ module.exports = {
 
   /**
    * Makes the first letter in any string of text capital
-   * 
+   *
    * @param {string} text The text to convert
    * @example
    * firstUpper('discord boats'); // 'Discord Boats'
@@ -138,7 +138,7 @@ module.exports = {
   /**
    * Joins the current directory with any other appending directories
    * @param {...string} paths The paths to conjoin
-   * @returns {string} The paths conjoined 
+   * @returns {string} The paths conjoined
    */
   getPath(...paths) {
     const sep = process.platform === 'win32' ? '\\' : '/';
@@ -152,14 +152,14 @@ module.exports = {
 
   /**
    * Asynchronous way to halt the process for x amount of milliseconds
-   * 
+   *
    * Since `Promise` are macro-tasks and stuff like setTimeout, setInterval are micro-tasks,
    * the event loop will run any synchronous code first THEN all of the Promises in that code,
    * then all of the micro-tasks; so it's an endless loop of doing all 3 I described.
-   * 
+   *
    * Why is this important? We can basically "manipulate" the event-loop to halt a certain
    * process until another process is done, I know... I'm weird at explaining stuff.
-   * 
+   *
    * @param duration The amount of time to "sleep"
    * @returns An unknown Promise
    */
@@ -192,24 +192,24 @@ module.exports = {
 
   /**
    * Humanizes a date to a string
-   * @param {number} ms 
+   * @param {number} ms
    */
   humanize(ms) {
     const months = Math.floor(ms / 1000 / 60 / 60 / 24 / 7 / 12);
     ms -= months * 1000 * 60 * 60 * 24 * 7 * 12;
-  
+
     const weeks = Math.floor(ms / 1000 / 60 / 60 / 24 / 7);
     ms -= weeks * 1000 * 60 * 60 * 24 * 7;
-  
+
     const days = Math.floor(ms / 1000 / 60 / 60 / 24);
     ms -= days * 1000 * 60 * 60 * 24;
-  
+
     const hours = Math.floor(ms / 1000 / 60 / 60);
     ms -= hours * 1000 * 60 * 60;
-  
+
     const mins = Math.floor(ms / 1000 / 60);
     ms -= mins * 1000 * 60;
-  
+
     const sec = Math.floor(ms / 1000);
     const items = [];
     const addS = (value) => value > 1 ? 's' : '';
@@ -220,7 +220,7 @@ module.exports = {
     if (hours > 0) items.push(`${hours} hour${addS(hours)}`);
     if (mins > 0) items.push(`${mins} minute${addS(mins)}`);
     if (sec > 0) items.push(`${sec} second${addS(sec)}`);
-  
+
     return items.filter(Boolean).join(', ');
   },
 

@@ -23,7 +23,7 @@
 /**
  * Represents an [Event] class. The class will inherit
  * this instance to create a new "Event" marker.
- * 
+ *
  * Basically, it's a class for running events from Eris.
  */
 module.exports = class Event {
