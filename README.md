@@ -20,7 +20,7 @@ press f in chat bois
 ### Process (Docker)
 > Notice: **This is the recommended way to run PressFBot so you don't need to install any dependencies on your machine.**
 >
-> :warnings: **If you are using Windows or macOS, please install Docker Desktop for your system if you are gonna use this method.**
+> :warning: **If you are using Windows or macOS, please install Docker Desktop for your system if you are going to use this method.**
 
 - [Fork](https://github.com/auguwu/PressFBot/fork) the repository under your username and run `git clone https://github.com/$USERNAME/PressFBot`
   - omit `$USERNAME` with your actual username on GitHub.
