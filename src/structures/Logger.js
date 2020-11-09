@@ -60,7 +60,7 @@ module.exports = class Logger {
    */
   getDate() {
     const now = new Date();
-    
+
     const hours = escapeTime(now.getHours());
     const minutes = escapeTime(now.getMinutes());
     const seconds = escapeTime(now.getHours());
@@ -84,11 +84,11 @@ module.exports = class Logger {
    */
   _formatMessages(...messages) {
     return messages
-      .map((message) => 
-        message instanceof Object 
-          ? inspect(message) 
-          : Array.isArray(message) 
-            ? `[${message.join(', ')} (${message.length} items)]` 
+      .map((message) =>
+        message instanceof Object
+          ? inspect(message)
+          : Array.isArray(message)
+            ? `[${message.join(', ')} (${message.length} items)]`
             : message
       ).join('\n');
   }

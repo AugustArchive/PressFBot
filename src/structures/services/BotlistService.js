@@ -25,7 +25,7 @@ const Logger = require('../Logger');
 /**
  * Represents a [BotlistService], basically
  * a service to post to certain Bot Lists.
- * 
+ *
  * __**Botlists Avaliable**__
  * - [discord.boats](https://discord.boats)
  */
