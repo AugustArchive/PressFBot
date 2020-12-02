@@ -1,5 +1,5 @@
 # 1. Download latest from Docker Hub
-FROM node:latest
+FROM node:alpine
 
 # 2. Set the directory
 WORKDIR /opt/PressFBot
@@ -19,8 +19,5 @@ COPY . .
 # 7. Lints the repository
 RUN npm run lint
 
-# 8. Expose 4200 for Webhooks
-EXPOSE 4200
-
-# 9. Setup entrypoint
+# 8. Setup entrypoint
 CMD [ "npm", "run", "start" ]
