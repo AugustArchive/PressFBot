@@ -1,9 +1,0 @@
-> Current Commit: [**$COMMIT$**]($HASH:URL$)
-> View all changes [here](https://github.com/auguwu/PressFBot)
-
-Fixes:
-- Fix miscellaneous grammar issues
-
-Additions:
-- Added commit URL in changelog
-- Added `ping` command
