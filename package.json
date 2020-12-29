@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@augu/dotenv": "1.2.0",
-    "@augu/immutable": "0.6.0",
+    "@augu/immutable": "0.6.1",
     "@augu/logging": "2.0.1",
     "@augu/orchid": "1.8.1",
     "@sentry/node": "5.29.2",
