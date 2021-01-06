@@ -20,7 +20,7 @@
     "@augu/orchid": "1.8.1",
     "@sentry/node": "5.29.2",
     "leeks.js": "0.0.9",
-    "wumpcord": "1.0.3"
+    "wumpcord": "1.0.1"
   },
   "devDependencies": {
     "@augu/eslint-config": "1.9.0",
