@@ -70,7 +70,7 @@ async function main() {
   client.on('ready', async () => {
     logger.info(`Ready-ed up as ${client.user.tag}!`);
     client.setStatus('online', {
-      name: `to f in chat in ${client.guilds.cache.size.toLocaleString()}`,
+      name: `to f in chat in ${client.guilds.cache.size.toLocaleString()} guilds`,
       type: 2
     });
 
