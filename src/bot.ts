@@ -20,3 +20,94 @@
  * SOFTWARE.
  */
 
+import { Client } from 'wumpcord';
+import { parse } from '@augu/dotenv';
+import { join } from 'path';
+import Logger from './logger';
+import orchid from '@augu/orchid';
+
+import * as events from './events';
+
+const pkg = require('../package.json');
+
+interface EnvConfig {
+  BOATS_TOKEN?: string;
+  NODE_ENV: 'development' | 'production';
+  TOKEN: string;
+}
+
+const logger = new Logger('PressFBot');
+async function main() {
+  parse<EnvConfig>({
+    file: join(__dirname, '..', '.env'),
+    populate: true,
+    schema: {
+      BOATS_TOKEN: {
+        type: 'string',
+        default: undefined
+      },
+
+      NODE_ENV: {
+        type: 'string',
+        oneOf: ['development', 'production'],
+        default: 'development'
+      },
+
+      TOKEN: 'string'
+    }
+  });
+
+  if (process.env.NODE_ENV === 'development')
+    logger.warn('You are running PressFBot in development mode, if any issues occur, report them! (https://github.com/auguwu/PressFBot)');
+
+  const client = new Client({
+    token: process.env.TOKEN,
+    ws: {
+      intents: ['guilds', 'guildMessages']
+    }
+  });
+
+  client.on('ready', async () => {
+    logger.info(`Ready-ed up as ${client.user.tag}!`);
+    client.setStatus('online', {
+      name: `to f in chat in ${client.guilds.cache.size.toLocaleString()}`,
+      type: 2
+    });
+
+    if (process.env.BOATS_TOKEN !== undefined) {
+      logger.info('Found discord.boats token! Now posting statistics...');
+      await orchid.post({
+        method: 'POST',
+        url: `https://discord.boats/api/bot/${client.user.id}`,
+
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': `PressFBot (v${pkg.version}, https://github.com/auguwu/PressFBot)`,
+          Authorization: process.env.BOATS_TOKEN
+        }
+      });
+    }
+  });
+
+  client.on('guildDelete', events.onGuildDelete);
+  client.on('guildCreate', events.onGuildCreate);
+  client.on('shardReady', events.onShardReady);
+  client.on('message', events.onMessageCreate);
+
+  try {
+    await client.connect();
+    logger.info('Connected to Discord successfully.');
+  } catch(ex) {
+    logger.error('Unable to connect to Discord!', ex);
+  }
+
+  process.on('SIGINT', () => {
+    client.disconnect();
+    process.exit(0);
+  });
+
+  process.on('unhandledRejection', error => logger.error(error));
+  process.on('uncaughtException', error => logger.error(error));
+}
+
+main();

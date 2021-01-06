@@ -9,9 +9,10 @@
   "scripts": {
     "docker:build": "docker build . -t pressfbot:latest",
     "docker:run": "docker run -d --name pressfbot pressfbot:latest",
+    "build": "npm run lint && rm -rf build && tsc",
     "prepare": "npm run lint",
     "start": "cd src && node bot.js",
-    "lint": "eslint src lib --ext .ts --fix"
+    "lint": "eslint src --ext .ts --fix"
   },
   "dependencies": {
     "@augu/collections": "1.0.2",
@@ -19,7 +20,7 @@
     "@augu/orchid": "1.8.1",
     "@sentry/node": "5.29.2",
     "leeks.js": "0.0.9",
-    "wumpcord": "1.0.0"
+    "wumpcord": "1.0.1"
   },
   "devDependencies": {
     "@augu/eslint-config": "1.9.0",
