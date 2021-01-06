@@ -4,5 +4,9 @@ node_modules/
 build/
 old/
 
+LICENSE
+README.md
+renovate.json
+update.sh
 *.lock
 *.log
