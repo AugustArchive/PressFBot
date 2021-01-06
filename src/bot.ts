@@ -84,6 +84,13 @@ async function main() {
           'Content-Type': 'application/json',
           'User-Agent': `PressFBot (v${pkg.version}, https://github.com/auguwu/PressFBot)`,
           Authorization: process.env.BOATS_TOKEN
+        },
+
+        data: {
+          /* eslint-disable camelcase */
+          server_count: client.guilds.cache.size,
+          shard_count: client.shards.size
+          /* eslint-enable camelcase */
         }
       });
     }
