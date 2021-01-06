@@ -3,6 +3,5 @@ build/
 old/
 *.env
 
-package-*.json
 *.lock
 *.log

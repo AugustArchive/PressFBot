@@ -1,7 +1,8 @@
 node_modules/
 .github/
 .vscode/
+build/
+old/
 
-package-*.json
 *.lock
 *.log
