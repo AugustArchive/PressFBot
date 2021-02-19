@@ -17,7 +17,7 @@
   "dependencies": {
     "@augu/collections": "1.0.2",
     "@augu/dotenv": "1.2.0",
-    "@augu/orchid": "1.8.1",
+    "@augu/orchid": "2.2.1",
     "@sentry/node": "5.29.2",
     "leeks.js": "0.0.9",
     "wumpcord": "1.0.3"
