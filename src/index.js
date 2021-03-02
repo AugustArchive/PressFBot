@@ -109,7 +109,16 @@ client.on('message', async event => {
     await redis.set('pressfbot:counter', `${count}`); // force to be string
     await redis.set(`pressfbot:counter:${event.guild.id}`, `${guildCount}`);
 
-    return event.channel.send(`**${event.message.author.tag}** has paid respects. Now at **${count}** Fs in chat globally, **${guildCount}** Fs in this guild.`);
+    return event.channel.send({
+      content: [
+        `<@!${event.message.author.id}> has paid respects.`,
+        '',
+        `> **Global Counter**: ${count.toLocaleString()}`,
+        `> **${event.guild.name}**: ${guildCount.toLocaleString()}`
+      ].join('\n'),
+
+      mentions: { users: [] }
+    });
   }
 
   // check for commands
