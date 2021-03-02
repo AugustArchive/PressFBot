@@ -176,6 +176,7 @@ client.on('guildDelete', async event => {
 // listen on shard events
 client.on('shardReady', id => logger.log(`[#${id}] Shard is ready.`));
 client.on('shardClose', (id, error) => logger.error(`[#${id}] Shard has closed connection with Discord\n`, error));
+client.on('debug', console.debug);
 
 // listen to redis shit
 redis.on('ready', () => logger.log('Redis has connected successfully'));
