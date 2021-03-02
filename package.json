@@ -12,7 +12,7 @@
     "build": "npm run lint && rm -rf build && tsc",
     "prepare": "npm run lint",
     "start": "cd build && node bot.js",
-    "lint": "eslint src --ext .ts --fix"
+    "lint": "eslint src --ext .js --fix"
   },
   "dependencies": {
     "@augu/dotenv": "1.3.0",

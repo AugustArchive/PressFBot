@@ -68,6 +68,9 @@ module.exports = {
   },
 
   async eval(event, args) {
+    if (!process.env.OWNERS.split(',').includes(event.message.author.id))
+      return;
+
     if (!args.length)
       return event.message.reply('gimme stuff to eval >w<', { // could care less tbh
         mentions: { replied: true }
