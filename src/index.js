@@ -203,8 +203,7 @@ async function postStats() {
 
   if (process.env.BOATS_TOKEN !== undefined) {
     const res = await orchid.post({
-      baseUrl: 'https://discord.boats/api',
-      url: `/bot/${client.user.id}`,
+      url: `https://discord.boats/api/v2/bot/${client.user.id}`,
 
       headers: {
         Authorization: process.env.BOATS_TOKEN
