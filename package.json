@@ -20,7 +20,7 @@
     "@augu/utils": "1.2.0",
     "ioredis": "4.24.2",
     "loggaby": "4.0.3",
-    "wumpcord": "1.0.17"
+    "wumpcord": "1.1.0"
   },
   "devDependencies": {
     "@augu/eslint-config": "1.10.0",
